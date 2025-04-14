@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_module1/assets/assets.dart';
 import 'package:flutter_module1/screen/chat_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,24 +36,70 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(height: 80),
-              Text("Email/Phone number"),
+              Text(
+                "Email/Phone number",
+                style: GoogleFonts.lato(
+                  fontSize: 14,
+                ),
+              ),
               SizedBox(height: 8),
               SizedBox(
                 height: 45,
                 child: TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    hintText: "Your email",
+                    hintStyle: GoogleFonts.lato(
+                      fontSize: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black38,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black38,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                      ),
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 15),
-              Text("Password"),
+              Text(
+                "Password",
+                style: GoogleFonts.lato(
+                  fontSize: 14,
+                ),
+              ),
               SizedBox(height: 8),
               SizedBox(
                 height: 45,
                 child: TextField(
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    hintText: "****",
+                    hintStyle: GoogleFonts.lato(
+                      fontSize: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black38,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black38,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -112,13 +159,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 5),
               Center(
-                child: Text(
-                  "Powered By Konnek!",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Powered By",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.lato(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Image.asset(
+                      Assets.icKonnek,
+                      package: "flutter_plugin_test2",
+                      height: 16,
+                    ),
+                  ],
                 ),
               ),
             ],
