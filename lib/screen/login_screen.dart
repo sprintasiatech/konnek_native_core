@@ -19,6 +19,9 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+        ),
         body: Container(
           padding: EdgeInsets.all(12),
           child: Column(
@@ -174,7 +177,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(width: 5),
                     Image.asset(
                       Assets.icKonnek,
-                      package: "flutter_plugin_test2",
                       height: 16,
                     ),
                   ],
