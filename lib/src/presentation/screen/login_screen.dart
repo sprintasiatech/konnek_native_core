@@ -285,7 +285,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(width: 5),
                         Image.asset(
                           Assets.icKonnek,
-                          package: "flutter_module1",
                           height: 16,
                         ),
                       ],

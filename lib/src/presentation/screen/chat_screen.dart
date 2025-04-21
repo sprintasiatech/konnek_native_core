@@ -542,7 +542,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                 SizedBox(width: 5),
                                 Image.asset(
                                   Assets.icKonnek,
-                                  package: "flutter_module1",
                                   height: 16,
                                 ),
                               ],
