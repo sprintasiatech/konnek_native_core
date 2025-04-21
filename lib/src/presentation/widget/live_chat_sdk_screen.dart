@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_plugin_test2/src/presentation/interface/live_chat_sdk.dart';
+import 'package:flutter_module1/src/presentation/interface/live_chat_sdk.dart';
 
 class LiveChatSdkScreen extends StatefulWidget {
   final Widget child;
