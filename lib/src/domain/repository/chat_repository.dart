@@ -23,5 +23,5 @@ abstract class ChatRepository {
     String? text,
     String? mediaData,
   });
-  IO.Socket startWebSocketIO();
+  IO.Socket? startWebSocketIO();
 }

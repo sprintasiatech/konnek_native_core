@@ -18,9 +18,9 @@ class ChatRepositoryImpl extends ChatRepository {
   static ChatRemoteSource remoteSource = ChatRemoteSourceImpl();
 
   @override
-  IO.Socket startWebSocketIO() {
+  IO.Socket? startWebSocketIO() {
     try {
-      IO.Socket socket = remoteSource.startWebSocketIO();
+      IO.Socket? socket = remoteSource.startWebSocketIO();
       return socket;
     } catch (e) {
       AppLoggerCS.debugLog("[ChatRepositoryImpl][startWebSocketIO] error: $e");

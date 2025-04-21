@@ -10,6 +10,7 @@ class LocalKey {
   static const String clientData = "clientData";
   static const String supportData = "supportData";
   static const String configData = "configData";
+  static const String socketReady = "socketReady";
 }
 
 class ChatLocalSource {
@@ -17,6 +18,33 @@ class ChatLocalSource {
   // ChatLocalSource(this.localServiceHive);
 
   static LocalServiceHive localServiceHive = InterModule.famCodingSupply.localServiceHive;
+
+  Future<void> setSocketReady(bool value) async {
+    try {
+      await localServiceHive.user.putSecure(
+        key: LocalKey.socketReady,
+        data: value,
+      );
+    } catch (e) {
+      AppLoggerCS.debugLog("[setConfigData] error: $e");
+      rethrow;
+    }
+  }
+
+  Future<bool?> getSocketReady() async {
+    try {
+      bool? value = await localServiceHive.user.getSecure(
+        key: LocalKey.socketReady,
+      );
+      if (value != null) {
+        return value;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> setConfigData(DataGetConfig value) async {
     try {

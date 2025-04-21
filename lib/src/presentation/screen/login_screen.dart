@@ -20,8 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    nameController.text = "test";
-    emailController.text = "test@test.com";
+    // nameController.text = "test";
+    // emailController.text = "test@test.com";
 
     // nameController.text = "test1";
     // emailController.text = "test1@test.com";
@@ -285,6 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(width: 5),
                         Image.asset(
                           Assets.icKonnek,
+                          package: "flutter_module1",
                           height: 16,
                         ),
                       ],
