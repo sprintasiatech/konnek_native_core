@@ -10,8 +10,8 @@ class SendChatResponseModel {
   });
 
   factory SendChatResponseModel.fromJson(Map<String, dynamic> json) => SendChatResponseModel(
-        meta: MetaSendChat.fromJson(json["meta"]),
-        data: DataSendChat.fromJson(json["data"]),
+        meta: json["meta"] == null ? null : MetaSendChat.fromJson(json["meta"]),
+        data: json["data"] == null ? null : DataSendChat.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {

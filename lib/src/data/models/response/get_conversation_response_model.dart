@@ -10,8 +10,8 @@ class GetConversationResponseModel {
   });
 
   factory GetConversationResponseModel.fromJson(Map<String, dynamic> json) => GetConversationResponseModel(
-        meta: MetaGetConversation.fromJson(json["meta"]),
-        data: DataGetConversation.fromJson(json["data"]),
+        meta: json["meta"] == null ? null : MetaGetConversation.fromJson(json["meta"]),
+        data: json["data"] == null ? null : DataGetConversation.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -34,9 +34,9 @@ class DataGetConversation {
   });
 
   factory DataGetConversation.fromJson(Map<String, dynamic> json) => DataGetConversation(
-        conversations: List<ConversationList>.from(json["conversations"].map((x) => ConversationList.fromJson(x))),
-        expire: DateTime.parse(json["expire"]),
-        room: RoomGetConversation.fromJson(json["room"]),
+        conversations: json["conversations"] == null ? [] : List<ConversationList>.from(json["conversations"].map((x) => ConversationList.fromJson(x))),
+        expire: json["expire"] == null ? null : DateTime.parse(json["expire"]),
+        room: json["room"] == null ? null : RoomGetConversation.fromJson(json["room"]),
         token: json["token"],
       );
 
@@ -102,11 +102,11 @@ class ConversationList extends ChatItem {
         text: json["text"],
         payload: json["payload"],
         status: json["status"],
-        messageTime: DateTime.parse(json["message_time"]),
-        createdAt: DateTime.parse(json["created_at"]),
+        messageTime: json["message_time"] == null ? null : DateTime.parse(json["message_time"]),
+        createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
         createdBy: json["created_by"],
-        session: SessionGetConversation.fromJson(json["session"]),
-        user: UserGetConversation.fromJson(json["user"]),
+        session: json["session"] == null ? null : SessionGetConversation.fromJson(json["session"]),
+        user: json["user"] == null ? null : UserGetConversation.fromJson(json["user"]),
         unixMsgTime: json["unix_msg_time"],
       );
 
@@ -180,16 +180,16 @@ class SessionGetConversation {
         roomId: json["room_id"],
         divisionId: json["division_id"],
         agentUserId: json["agent_user_id"],
-        agent: UserGetConversation.fromJson(json["agent"]),
+        agent: json["agent"] == null ? null : UserGetConversation.fromJson(json["agent"]),
         categories: json["categories"],
         botStatus: json["bot_status"],
         status: json["status"],
         openBy: json["open_by"],
         handoverBy: json["handover_by"],
         closeBy: json["close_by"],
-        closeUser: UserGetConversation.fromJson(json["close_user"]),
-        openTime: DateTime.parse(json["open_time"]),
-        queueTime: DateTime.parse(json["queue_time"]),
+        closeUser: json["close_user"] == null ? null : UserGetConversation.fromJson(json["close_user"]),
+        openTime: json["open_time"] == null ? null : DateTime.parse(json["open_time"]),
+        queueTime: json["queue_time"] == null ? null : DateTime.parse(json["queue_time"]),
         assignTime: json["assign_time"] == null ? null : DateTime.parse(json["assign_time"]),
         firstResponseTime: json["first_response_time"],
         lastAgentChatTime: json["last_agent_chat_time"],
@@ -284,34 +284,6 @@ class UserGetConversation {
       };
 }
 
-// enum ChannelCode { EMPTY, WEB }
-
-// final channelCodeValues = EnumValues({"": ChannelCode.EMPTY, "web": ChannelCode.WEB});
-
-// enum Email { AGENT_STGRABIL_HARAKIRIMAIL_COM, BOT, EMPTY, FADHILATULMUTIA_GMAIL_COM, TEST_TEST_COM, TUNGDASEM_WARINGIN_COM, TUYULVICKRI04_GMAIL_COM }
-
-// final emailValues = EnumValues({
-//   "agent_stgrabil@harakirimail.com": Email.AGENT_STGRABIL_HARAKIRIMAIL_COM,
-//   "bot": Email.BOT,
-//   "": Email.EMPTY,
-//   "fadhilatulmutia@gmail.com": Email.FADHILATULMUTIA_GMAIL_COM,
-//   "test@test.com": Email.TEST_TEST_COM,
-//   "tungdasem@waringin.com": Email.TUNGDASEM_WARINGIN_COM,
-//   "tuyulvickri04@gmail.com": Email.TUYULVICKRI04_GMAIL_COM
-// });
-
-// enum Name { AGENT_STGRABIL, BOT, EMPTY, FADHILATULMUTIA, TEST_TEST_COM, TUNGDASEM, TUYULVICKRI04 }
-
-// final nameValues = EnumValues({"agent_stgrabil": Name.AGENT_STGRABIL, "bot": Name.BOT, "": Name.EMPTY, "fadhilatulmutia": Name.FADHILATULMUTIA, "test@test.com": Name.TEST_TEST_COM, "tungdasem": Name.TUNGDASEM, "tuyulvickri04": Name.TUYULVICKRI04});
-
-// enum Categories { BAARU_BANGET_KATEGORI, EMPTY }
-
-// final categoriesValues = EnumValues({"[\"baaru banget kategori\"]": Categories.BAARU_BANGET_KATEGORI, "": Categories.EMPTY});
-
-// enum Type { TEXT }
-
-// final typeValues = EnumValues({"text": Type.TEXT});
-
 class RoomGetConversation {
   String? agentUserId;
   dynamic assignTime;
@@ -391,10 +363,10 @@ class RoomGetConversation {
         handoverBy: json["handover_by"],
         id: json["id"],
         lastAgentChatTime: json["last_agent_chat_time"],
-        lastCustomerMessageTime: DateTime.parse(json["last_customer_message_time"]),
+        lastCustomerMessageTime: json["last_customer_message_time"] == null ? null : DateTime.parse(json["last_customer_message_time"]),
         openBy: json["open_by"],
-        openTime: DateTime.parse(json["open_time"]),
-        queueTime: DateTime.parse(json["queue_time"]),
+        openTime: json["open_time"] == null ? null : DateTime.parse(json["open_time"]),
+        queueTime: json["queue_time"] == null ? null : DateTime.parse(json["queue_time"]),
         sendOutboundFlag: json["send_outbound_flag"],
         sessionId: json["session_id"],
         status: json["status"],

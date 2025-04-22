@@ -22,7 +22,7 @@ abstract class ChatRemoteSource {
   Future<Response?> uploadMedia({
     required Map<String, dynamic> requestData,
   });
-  IO.Socket startWebSocketIO();
+  IO.Socket? startWebSocketIO();
 }
 
 class ChatRemoteSourceImpl extends ChatRemoteSource {
@@ -31,16 +31,20 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
   static AppApiServiceCS apiService = InterModule.appApiService;
 
   @override
-  IO.Socket startWebSocketIO() {
+  IO.Socket? startWebSocketIO() {
     try {
-      IO.Socket socket = AppSocketioService.connect(
-        url: baseUrlSocket,
-        token: InterModule.accessToken,
-        // token: token ?? "",
-      );
-      AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.connected: ${socket.connected}");
-      AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.acks: ${socket.acks}");
-      return socket;
+      if (InterModule.accessToken == "") {
+        return null;
+      } else {
+        IO.Socket socket = AppSocketioService.connect(
+          url: baseUrlSocket,
+          token: InterModule.accessToken,
+          // token: token ?? "",
+        );
+        AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.connected: ${socket.connected}");
+        AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.acks: ${socket.acks}");
+        return socket;
+      }
     } catch (e) {
       AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] error: $e");
       rethrow;

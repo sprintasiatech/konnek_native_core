@@ -8,8 +8,8 @@ class GetConfigResponseModel {
   });
 
   factory GetConfigResponseModel.fromJson(Map<String, dynamic> json) => GetConfigResponseModel(
-        meta: MetaGetConfig.fromJson(json["meta"]),
-        data: DataGetConfig.fromJson(json["data"]),
+        meta: json["meta"] == null ? null : MetaGetConfig.fromJson(json["meta"]),
+        data: json["data"] == null ? null : DataGetConfig.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
