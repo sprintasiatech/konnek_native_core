@@ -50,7 +50,10 @@ class _ChatScreenState extends State<ChatScreen> {
         _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
         setState(() {});
       },
-      onFailed: (errorMessage) {},
+      onFailed: (errorMessage) async {
+        await ChatLocalSource().setSocketReady(false);
+        AppController.socketReady = false;
+      },
     );
   }
 
@@ -70,11 +73,20 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    AppSocketioService.socket.disconnect();
-    AppSocketioService.socket.onDisconnect((_) {
-      AppLoggerCS.debugLog("disconnected");
-      AppLoggerCS.debugLog("disconnected id: ${AppSocketioService.socket.id}");
-    });
+    disconnectSocket();
+  }
+
+  void disconnectSocket() async {
+    try {
+      AppSocketioService.socket.disconnect();
+      AppSocketioService.socket.onDisconnect((_) {
+        AppLoggerCS.debugLog("disconnected");
+        AppLoggerCS.debugLog("disconnected id: ${AppSocketioService.socket.id}");
+      });
+    } catch (e) {
+      AppController.socketReady = false;
+      await ChatLocalSource().setSocketReady(false);
+    }
   }
 
   @override

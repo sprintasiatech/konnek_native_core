@@ -42,7 +42,8 @@ class ChatLocalSource {
         return null;
       }
     } catch (e) {
-      rethrow;
+      AppLoggerCS.debugLog("[getSocketReady] error: $e");
+      return null;
     }
   }
 
@@ -72,7 +73,8 @@ class ChatLocalSource {
         return null;
       }
     } catch (e) {
-      rethrow;
+      AppLoggerCS.debugLog("[getConfigData] error: $e");
+      return null;
     }
   }
 
@@ -102,7 +104,8 @@ class ChatLocalSource {
         return null;
       }
     } catch (e) {
-      rethrow;
+      AppLoggerCS.debugLog("[getSupportData] error: $e");
+      return null;
     }
   }
 
@@ -125,7 +128,8 @@ class ChatLocalSource {
       );
       return value;
     } catch (e) {
-      rethrow;
+      AppLoggerCS.debugLog("[getAccessToken] error: $e");
+      return null;
     }
   }
 
@@ -161,7 +165,7 @@ class ChatLocalSource {
       }
     } catch (e) {
       AppLoggerCS.debugLog("[getClientData] error: $e");
-      rethrow;
+      return null;
     }
   }
 }

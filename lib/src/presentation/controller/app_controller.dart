@@ -120,6 +120,8 @@ class AppController {
       bool? valueSocketReady = await ChatLocalSource().getSocketReady();
       if (valueSocketReady != null) {
         AppController.socketReady = valueSocketReady;
+      } else {
+        AppController.socketReady = false;
       }
 
       GetConfigResponseModel? getConfigResponseModel = await ChatRepositoryImpl().getConfig(
