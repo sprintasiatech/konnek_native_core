@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
 import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
   final ConversationList data;
