@@ -42,18 +42,16 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _checkAccessTokenAndFetch() async {
-    if (AppController.socketReady) {
-      await AppController().startWebSocketIO();
-      await AppController().handleWebSocketIO(
-        onSuccess: () async {
-          await ChatLocalSource().setSocketReady(true);
-          AppController.socketReady = true;
-          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          setState(() {});
-        },
-        onFailed: (errorMessage) {},
-      );
-    }
+    await AppController().startWebSocketIO();
+    await AppController().handleWebSocketIO(
+      onSuccess: () async {
+        await ChatLocalSource().setSocketReady(true);
+        AppController.socketReady = true;
+        _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+        setState(() {});
+      },
+      onFailed: (errorMessage) {},
+    );
   }
 
   void _scrollToBottom() {
