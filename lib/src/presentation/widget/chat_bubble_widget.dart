@@ -8,10 +8,12 @@ import 'package:flutter_module1/src/data/models/response/get_conversation_respon
 class ChatBubbleWidget extends StatefulWidget {
   final ConversationList data;
   final DataGetConfig? dataGetConfig;
+  final void Function(String srcImage)? openImageCallback;
 
   const ChatBubbleWidget({
     required this.data,
     required this.dataGetConfig,
+    this.openImageCallback,
     super.key,
   });
 
@@ -29,49 +31,59 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         children: [
           // SizedBox(width: 10),
           Flexible(
-            child: Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                // color: Colors.purpleAccent.shade200.withOpacity(0.3),
-                color: const Color(0xff2a55a4),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (widget.data.payload != null && widget.data.payload != "")
-                    Column(
-                      children: [
-                        Image.network(
-                          // "https://cms.shootingstar.id/74/main.jpg",
-                          jsonDecode(widget.data.payload ?? "")['url'],
-                          height: 80,
-                          width: 80,
-                          fit: BoxFit.cover,
-                        ),
-                        SizedBox(height: 5),
-                      ],
+            child: InkWell(
+              onTap: () {
+                AppLoggerCS.debugLog("call here");
+                if (widget.data.payload != null || widget.data.payload != "") {
+                  if ((jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".jpg") || (jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".png")) {
+                    widget.openImageCallback?.call(jsonDecode(widget.data.payload ?? "")['url']);
+                  }
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  // color: Colors.purpleAccent.shade200.withOpacity(0.3),
+                  color: const Color(0xff2a55a4),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (widget.data.payload != null && widget.data.payload != "")
+                      Column(
+                        children: [
+                          Image.network(
+                            // "https://cms.shootingstar.id/74/main.jpg",
+                            jsonDecode(widget.data.payload ?? "")['url'],
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
+                          ),
+                          SizedBox(height: 5),
+                        ],
+                      ),
+                    Text(
+                      // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                      widget.data.text ?? "null",
+                      style: GoogleFonts.lato(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  Text(
-                    // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-                    widget.data.text ?? "null",
-                    style: GoogleFonts.lato(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    SizedBox(height: 5),
+                    Text(
+                      // "15:29",
+                      // "${DateTime.now().hour}:${DateTime.now().minute}",
+                      DateFormat("hh:mm").format(widget.data.messageTime!.toLocal()),
+                      style: GoogleFonts.lato(
+                        color: Colors.white38,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    // "15:29",
-                    // "${DateTime.now().hour}:${DateTime.now().minute}",
-                    DateFormat("hh:mm").format(widget.data.messageTime!.toLocal()),
-                    style: GoogleFonts.lato(
-                      color: Colors.white38,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -111,48 +123,58 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
           ),
           SizedBox(width: 10),
           Flexible(
-            child: Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                // color: Colors.purpleAccent.shade200.withOpacity(0.3),
-                color: const Color(0xff203080).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.data.payload != null && widget.data.payload != "")
-                    Column(
-                      children: [
-                        Image.network(
-                          // "https://cms.shootingstar.id/74/main.jpg",
-                          jsonDecode(widget.data.payload ?? "")['url'],
-                          height: 80,
-                          width: 80,
-                          fit: BoxFit.cover,
-                        ),
-                        SizedBox(height: 5),
-                      ],
+            child: InkWell(
+              onTap: () {
+                AppLoggerCS.debugLog("call here 2");
+                if (widget.data.payload != null || widget.data.payload != "") {
+                  if ((jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".jpg") || (jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".png")) {
+                    widget.openImageCallback?.call(jsonDecode(widget.data.payload ?? "")['url']);
+                  }
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  // color: Colors.purpleAccent.shade200.withOpacity(0.3),
+                  color: const Color(0xff203080).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.data.payload != null && widget.data.payload != "")
+                      Column(
+                        children: [
+                          Image.network(
+                            // "https://cms.shootingstar.id/74/main.jpg",
+                            jsonDecode(widget.data.payload ?? "")['url'],
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.cover,
+                          ),
+                          SizedBox(height: 5),
+                        ],
+                      ),
+                    Text(
+                      widget.data.text ?? "null",
+                      // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                      style: GoogleFonts.lato(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  Text(
-                    widget.data.text ?? "null",
-                    // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-                    style: GoogleFonts.lato(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    SizedBox(height: 5),
+                    Text(
+                      // "15:29",
+                      "${DateTime.now().hour}:${DateTime.now().minute}",
+                      style: GoogleFonts.lato(
+                        color: Colors.black45,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    // "15:29",
-                    "${DateTime.now().hour}:${DateTime.now().minute}",
-                    style: GoogleFonts.lato(
-                      color: Colors.black45,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
