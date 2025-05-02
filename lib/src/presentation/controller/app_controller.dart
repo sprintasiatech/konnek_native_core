@@ -441,6 +441,7 @@ class AppController {
         text: text,
         messageId: uuid,
         messageTime: DateTime.now().toUtc(),
+        status: 2,
       );
       conversationList.add(chatModel0);
       onChatSentFirst?.call();
@@ -540,7 +541,7 @@ class AppController {
         conversationList = [];
         currentPage = 1;
 
-        await _getConversation(
+        _getConversation(
           roomId: jwtValue["payload"]["data"]["room_id"],
           onSuccess: () async {
             // AppLoggerCS.debugLog("conversationList.last: ${jsonEncode(conversationList.last)}");
@@ -614,11 +615,14 @@ class AppController {
     required String roomId,
     void Function()? onSuccess,
     void Function(String errorMessage)? onFailed,
+    void Function(bool isLoading)? onLoading,
   }) async {
+    onLoading?.call(true);
     isLoading = true;
     try {
       DataSendChat? supportData = await ChatLocalSource().getSupportData();
       if (supportData == null) {
+        onLoading?.call(false);
         onFailed?.call("process 2 don't success");
         return;
       }
@@ -631,14 +635,20 @@ class AppController {
       );
       // AppLoggerCS.debugLog("[_getConversation] output ${jsonEncode(output?.meta?.toJson())}");
       if (output == null) {
+        onLoading?.call(false);
+        isLoading = false;
         onFailed?.call("empty data #1110");
         return;
       }
       if (output.meta == null) {
+        onLoading?.call(false);
+        isLoading = false;
         onFailed?.call("empty data #1111");
         return;
       }
       if (output.meta?.code != 200) {
+        onLoading?.call(false);
+        isLoading = false;
         onFailed?.call("${output.meta?.message}");
         return;
       }
@@ -652,10 +662,12 @@ class AppController {
       await ChatLocalSource().setAccessToken(output.data!.token!);
 
       isLoading = false;
+      onLoading?.call(false);
       onSuccess?.call();
     } catch (e) {
       AppLoggerCS.debugLog("[_getConversation] error: $e");
       isLoading = false;
+      onLoading?.call(false);
       onFailed?.call(e.toString());
     }
   }
@@ -701,8 +713,12 @@ class AppController {
     required File mediaData,
     void Function()? onSuccess,
     void Function(String errorMessage)? onFailed,
+    void Function(bool isLoading)? onLoading,
   }) async {
+    onLoading?.call(true);
+    isLoading = true;
     try {
+      await Future.delayed(Duration(milliseconds: 100));
       UploadFilesResponseModel? output = await ChatRepositoryImpl().uploadMedia(
         text: text,
         mediaData: mediaData.path,
@@ -710,16 +726,22 @@ class AppController {
       AppLoggerCS.debugLog("[uploadMedia] output ${jsonEncode(output?.meta?.toJson())}");
 
       if (output == null) {
+        isLoading = false;
+        onLoading?.call(false);
         onFailed?.call("empty data");
         return;
       }
 
       if (output.meta == null) {
+        isLoading = false;
+        onLoading?.call(false);
         onFailed?.call("empty data 2");
         return;
       }
 
       if (output.meta?.code != 201) {
+        isLoading = false;
+        onLoading?.call(false);
         onFailed?.call("${output.meta?.message}");
         return;
       }
@@ -731,8 +753,9 @@ class AppController {
         conversationList = [];
         currentPage = 1;
 
-        await _getConversation(
+        _getConversation(
           roomId: decodeJwt!["payload"]["data"]["room_id"],
+          onLoading: onLoading,
           onSuccess: () {
             if (isWebSocketStart) {
               AppSocketioService.socket.emit(
@@ -750,16 +773,21 @@ class AppController {
               );
               isWebSocketStart = true;
             }
+
             isLoading = false;
+            onLoading?.call(false);
             onSuccess?.call();
           },
           onFailed: (errorMessage) {
             isLoading = false;
+            onLoading?.call(false);
             onFailed?.call(errorMessage);
           },
         );
       }
     } catch (e) {
+      isLoading = false;
+      onLoading?.call(false);
       onFailed?.call(e.toString());
       return;
     }

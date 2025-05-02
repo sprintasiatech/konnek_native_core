@@ -26,36 +26,24 @@ class _LoginScreenState extends State<LoginScreen> {
     // nameController.text = "test1";
     // emailController.text = "test1@test.com";
 
-    // nameController.text = "testX";
-    // emailController.text = "testX@test.com";
-
-    // nameController.text = "testT";
-    // emailController.text = "testT@test.com";
-
-    // nameController.text = "testZ";
-    // emailController.text = "testZ@test.com";
-
-    // nameController.text = "testV";
-    // emailController.text = "testV@test.com";
-
-    // nameController.text = "testJ";
-    // emailController.text = "testJ@test.com";
-
-    // nameController.text = "rabilsdkmobile";
-    // emailController.text = "rabisdk@mail.com";
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await AppController().getConfig(
-        onSuccess: () async {
-          // AppLoggerCS.debugLog("[getConfig] success");
-          setState(() {});
-        },
-        onFailed: (errorMessage) {
-          // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
-          setState(() {});
-        },
-      );
-    });
+    Future.delayed(
+      Duration(milliseconds: 250),
+      () {
+        // WidgetsBinding.instance.ensureVisualUpdate();
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await AppController().getConfig(
+            onSuccess: () async {
+              // AppLoggerCS.debugLog("[getConfig] success");
+              setState(() {});
+            },
+            onFailed: (errorMessage) {
+              // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
+              setState(() {});
+            },
+          );
+        });
+      },
+    );
   }
 
   String nameErrorText = "";

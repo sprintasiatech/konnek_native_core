@@ -39,60 +39,62 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // AppController.isRoomClosed = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _scrollToBottom();
+    Future.delayed(Duration(milliseconds: 250), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        _scrollToBottom();
 
-      if (AppController.isWebSocketStart == false) {
-        AppController.onSocketChatCalled = () async {
-          AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
-          await ChatLocalSource().setSocketReady(true);
-          AppController.socketReady = true;
-          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          if (mounted) {
-            setState(() {});
-          }
-        };
-        AppController.onSocketChatStatusCalled = () {
-          AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
-          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          if (mounted) {
-            setState(() {});
-          }
-        };
-        AppController.onSocketRoomHandoverCalled = () {
-          AppLoggerCS.debugLog("[onSocketRoomHandoverCalled]");
-          // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          // if (mounted) {
-          //   setState(() {});
-          // }
-        };
-        AppController.onSocketRoomClosedCalled = () {
-          AppLoggerCS.debugLog("[onSocketRoomClosedCalled]");
-          // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          AppController.isRoomClosed = true;
-          if (mounted) {
-            setState(() {});
-          }
-        };
-        AppController.onSocketCSATCalled = () {
-          AppLoggerCS.debugLog("[onSocketCSATCalled]");
-          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          AppController.isCSATOpen = true;
-          AppController.isRoomClosed = false;
-          if (mounted) {
-            setState(() {});
-          }
-        };
-        AppController.onSocketCSATCloseCalled = () {
-          AppLoggerCS.debugLog("[onSocketCSATCloseCalled]");
-          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          AppController.isCSATOpen = false;
-          AppController.isRoomClosed = true;
-          if (mounted) {
-            setState(() {});
-          }
-        };
-      }
+        if (AppController.isWebSocketStart == false) {
+          AppController.onSocketChatCalled = () async {
+            AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
+            await ChatLocalSource().setSocketReady(true);
+            AppController.socketReady = true;
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            if (mounted) {
+              setState(() {});
+            }
+          };
+          AppController.onSocketChatStatusCalled = () {
+            AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            if (mounted) {
+              setState(() {});
+            }
+          };
+          AppController.onSocketRoomHandoverCalled = () {
+            AppLoggerCS.debugLog("[onSocketRoomHandoverCalled]");
+            // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            // if (mounted) {
+            //   setState(() {});
+            // }
+          };
+          AppController.onSocketRoomClosedCalled = () {
+            AppLoggerCS.debugLog("[onSocketRoomClosedCalled]");
+            // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            AppController.isRoomClosed = true;
+            if (mounted) {
+              setState(() {});
+            }
+          };
+          AppController.onSocketCSATCalled = () {
+            AppLoggerCS.debugLog("[onSocketCSATCalled]");
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            AppController.isCSATOpen = true;
+            AppController.isRoomClosed = false;
+            if (mounted) {
+              setState(() {});
+            }
+          };
+          AppController.onSocketCSATCloseCalled = () {
+            AppLoggerCS.debugLog("[onSocketCSATCloseCalled]");
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            AppController.isCSATOpen = false;
+            AppController.isRoomClosed = true;
+            if (mounted) {
+              setState(() {});
+            }
+          };
+        }
+      });
     });
   }
 
@@ -233,87 +235,89 @@ class _ChatScreenState extends State<ChatScreen> {
                           padding: EdgeInsets.all(12),
                           child: Column(
                             children: [
-                              if (isLoading) ...[
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height,
-                                  color: Colors.black38,
-                                  child: Center(
-                                    child: SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  ),
-                                ),
-                              ] else ...[
-                                ListView.builder(
-                                  reverse: false,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  // controller: _scrollController,
-                                  itemCount: _chatItems.length,
-                                  padding: EdgeInsets.all(0),
-                                  itemBuilder: (context, index) {
-                                    final item = _chatItems[index];
+                              Stack(
+                                children: [
+                                  ListView.builder(
+                                    reverse: false,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    // controller: _scrollController,
+                                    itemCount: _chatItems.length,
+                                    padding: EdgeInsets.all(0),
+                                    itemBuilder: (context, index) {
+                                      final item = _chatItems[index];
 
-                                    if (item is DateSeparator) {
-                                      return Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 8,
-                                          ),
-                                          child: Text(
-                                            item.label,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.bold,
+                                      if (item is DateSeparator) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 8,
+                                            ),
+                                            child: Text(
+                                              item.label,
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    } else if (item is ConversationList) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 5,
-                                        ),
-                                        child: ChatBubbleWidget(
-                                          onChooseCsat: (csatData, chatPayload) {
-                                            AppController().emitCsat(
-                                              postbackDataChosen: csatData,
-                                              chatData: chatPayload,
-                                              onSent: () {
-                                                AppLoggerCS.debugLog("[onSent]");
-                                                _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                if (mounted) {
-                                                  setState(() {});
+                                        );
+                                      } else if (item is ConversationList) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 5,
+                                          ),
+                                          child: ChatBubbleWidget(
+                                            onChooseCsat: (csatData, chatPayload) {
+                                              AppController().emitCsat(
+                                                postbackDataChosen: csatData,
+                                                chatData: chatPayload,
+                                                onSent: () {
+                                                  AppLoggerCS.debugLog("[onSent]");
+                                                  _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+                                                  if (mounted) {
+                                                    setState(() {});
+                                                  }
+                                                },
+                                              );
+                                            },
+                                            openImageCallback: (src) async {
+                                              if (src != "") {
+                                                AppLoggerCS.debugLog("src: $src");
+                                                if (AppImagePickerServiceCS().isImageFile(src)) {
+                                                  setState(() {
+                                                    openImage = true;
+                                                    srcImage = src;
+                                                  });
+                                                } else {
+                                                  await _launchUrl(src);
                                                 }
-                                              },
-                                            );
-                                          },
-                                          openImageCallback: (src) async {
-                                            if (src != "") {
-                                              AppLoggerCS.debugLog("src: $src");
-                                              if (AppImagePickerServiceCS().isImageFile(src)) {
-                                                setState(() {
-                                                  openImage = true;
-                                                  srcImage = src;
-                                                });
-                                              } else {
-                                                await _launchUrl(src);
                                               }
-                                            }
-                                          },
-                                          data: item,
-                                          dataGetConfig: AppController.dataGetConfigValue,
-                                        ),
-                                      );
-                                    }
+                                            },
+                                            data: item,
+                                            dataGetConfig: AppController.dataGetConfigValue,
+                                          ),
+                                        );
+                                      }
 
-                                    return SizedBox.shrink();
-                                  },
-                                ),
-                              ],
+                                      return SizedBox.shrink();
+                                    },
+                                  ),
+                                  // if (isLoading)
+                                  //   Container(
+                                  //     width: MediaQuery.of(context).size.width,
+                                  //     height: MediaQuery.of(context).size.height,
+                                  //     color: Colors.black38,
+                                  //     child: Center(
+                                  //       child: SizedBox(
+                                  //         height: 50,
+                                  //         width: 50,
+                                  //         child: CircularProgressIndicator(),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                ],
+                              ),
                               SizedBox(
                                 height: kToolbarHeight + 30 + ((uploadFile != null) ? 90 : 0),
                               ),
@@ -469,125 +473,21 @@ class _ChatScreenState extends State<ChatScreen> {
                                                   controller: textController,
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      if (value == "") {
+                                                      if (value == "" && uploadFile == null) {
                                                         isTextFieldEmpty = true;
                                                       } else {
                                                         isTextFieldEmpty = false;
                                                       }
                                                     });
                                                   },
-                                                  onSubmitted: (value) async {
-                                                    if (AppController.isCSATOpen) {
-                                                      AppController().emitCsatText(
-                                                        text: textController.text,
-                                                        onSent: () {
-                                                          AppLoggerCS.debugLog("[onSent]");
-                                                          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                          if (mounted) {
-                                                            setState(() {});
-                                                          }
-                                                        },
-                                                      );
-                                                    } else {
-                                                      if (uploadFile != null) {
-                                                        await AppController().uploadMedia(
-                                                          text: textController.text,
-                                                          mediaData: uploadFile!,
-                                                          onSuccess: () {
-                                                            uploadFile = null;
-                                                            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                            setState(() {});
-                                                          },
-                                                          onFailed: (errorMessage) {
-                                                            uploadFile = null;
-                                                            setState(() {});
-                                                          },
-                                                        );
-                                                      } else {
-                                                        await AppController().sendChat(
-                                                          text: textController.text,
-                                                          onSuccess: () async {
-                                                            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                            setState(() {});
-                                                          },
-                                                          onChatSentFirst: () {
-                                                            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                            setState(() {});
-                                                          },
-                                                          onGreetingsFailed: (value) {
-                                                            setState(() {
-                                                              _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                              isTextFieldFocused = true;
-                                                              isTextFieldEmpty = false;
-                                                              String valueGreetings = value.message!.split(' ').last;
-                                                              textController.text = valueGreetings;
-                                                            });
-                                                          },
-                                                        );
-                                                      }
-                                                    }
-
-                                                    textController.clear();
-                                                    isTextFieldEmpty = true;
-                                                    FocusManager.instance.primaryFocus?.unfocus();
+                                                  onSubmitted: (value) {
+                                                    textFieldInputAction();
                                                   },
                                                   decoration: InputDecoration(
                                                     suffixIcon: (isTextFieldFocused && !isTextFieldEmpty)
                                                         ? InkWell(
-                                                            onTap: () async {
-                                                              if (AppController.isCSATOpen) {
-                                                                AppController().emitCsatText(
-                                                                  text: textController.text,
-                                                                  onSent: () {
-                                                                    AppLoggerCS.debugLog("[onSent]");
-                                                                    _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                                    if (mounted) {
-                                                                      setState(() {});
-                                                                    }
-                                                                  },
-                                                                );
-                                                              } else {
-                                                                if (uploadFile != null) {
-                                                                  await AppController().uploadMedia(
-                                                                    text: textController.text,
-                                                                    mediaData: uploadFile!,
-                                                                    onSuccess: () {
-                                                                      uploadFile = null;
-                                                                      _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                                      setState(() {});
-                                                                    },
-                                                                    onFailed: (errorMessage) {
-                                                                      uploadFile = null;
-                                                                      setState(() {});
-                                                                    },
-                                                                  );
-                                                                } else {
-                                                                  await AppController().sendChat(
-                                                                    text: textController.text,
-                                                                    onSuccess: () async {
-                                                                      _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                                      setState(() {});
-                                                                    },
-                                                                    onChatSentFirst: () {
-                                                                      _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                                      setState(() {});
-                                                                    },
-                                                                    onGreetingsFailed: (value) {
-                                                                      setState(() {
-                                                                        _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                                        isTextFieldFocused = true;
-                                                                        isTextFieldEmpty = false;
-                                                                        String valueGreetings = value.message!.split(' ').last;
-                                                                        textController.text = valueGreetings;
-                                                                      });
-                                                                    },
-                                                                  );
-                                                                }
-                                                              }
-
-                                                              textController.clear();
-                                                              isTextFieldEmpty = true;
-                                                              FocusManager.instance.primaryFocus?.unfocus();
+                                                            onTap: () {
+                                                              textFieldInputAction();
                                                             },
                                                             child: Container(
                                                               padding: EdgeInsets.all(8),
@@ -632,6 +532,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                               },
                                             );
                                             metaFile = "File Name: $fileName\nSize File: ${fileSize.toStringAsFixed(3)} MB";
+                                            buttonValidation();
                                             setState(() {});
                                           },
                                           child: Container(
@@ -646,6 +547,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         InkWell(
                                           onTap: () async {
                                             uploadFile = await AppFilePickerServiceCS().pickFiles();
+                                            buttonValidation();
                                             setState(() {});
                                           },
                                           child: Container(
@@ -688,19 +590,19 @@ class _ChatScreenState extends State<ChatScreen> {
                       ],
                     ),
                   ),
-                  // if (isLoading)
-                  //   Container(
-                  //     width: MediaQuery.of(context).size.width,
-                  //     height: MediaQuery.of(context).size.height,
-                  //     color: Colors.black38,
-                  //     child: Center(
-                  //       child: SizedBox(
-                  //         height: 50,
-                  //         width: 50,
-                  //         child: CircularProgressIndicator(),
-                  //       ),
-                  //     ),
-                  //   ),
+                  if (isLoading)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      color: Colors.black38,
+                      child: Center(
+                        child: SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -750,5 +652,76 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  void buttonValidation() {
+    if (uploadFile == null && textController.text.isEmpty) {
+      isTextFieldFocused = false;
+      isTextFieldEmpty = true;
+    } else {
+      isTextFieldFocused = true;
+      isTextFieldEmpty = false;
+    }
+  }
+
+  void textFieldInputAction() {
+    if (AppController.isCSATOpen) {
+      AppController().emitCsatText(
+        text: textController.text,
+        onSent: () {
+          AppLoggerCS.debugLog("[onSent]");
+          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          if (mounted) {
+            setState(() {});
+          }
+        },
+      );
+    } else {
+      if (uploadFile != null) {
+        AppController().uploadMedia(
+          text: textController.text,
+          mediaData: uploadFile!,
+          onLoading: (bool loadingIndicator) {
+            setState(() {
+              isLoading = loadingIndicator;
+            });
+          },
+          onSuccess: () {
+            uploadFile = null;
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            setState(() {});
+          },
+          onFailed: (errorMessage) {
+            uploadFile = null;
+            setState(() {});
+          },
+        );
+      } else {
+        AppController().sendChat(
+          text: textController.text,
+          onSuccess: () async {
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            setState(() {});
+          },
+          onChatSentFirst: () {
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            setState(() {});
+          },
+          onGreetingsFailed: (value) {
+            setState(() {
+              _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+              isTextFieldFocused = true;
+              isTextFieldEmpty = false;
+              String valueGreetings = value.message!.split(' ').last;
+              textController.text = valueGreetings;
+            });
+          },
+        );
+      }
+    }
+
+    textController.clear();
+    isTextFieldEmpty = true;
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 }
