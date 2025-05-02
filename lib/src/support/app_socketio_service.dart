@@ -1,5 +1,5 @@
 import 'package:fam_coding_supply/logic/export.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class AppSocketioService {
   // Dart client
@@ -12,20 +12,20 @@ class AppSocketioService {
   // socket.onDisconnect((_) => print('disconnect'));
   // socket.on('fromServer', (_) => print(_));
 
-  static late IO.Socket socket;
+  static late io.Socket socket;
 
   static bool isOn = false;
 
-  static IO.Socket connect({
+  static io.Socket connect({
     required String url,
     required String token,
   }) {
     try {
-      AppLoggerCS.debugLog("connect socket");
-      socket = IO.io(
+      // AppLoggerCS.debugLog("connect socket");
+      socket = io.io(
         // "your-socket-url",
         url,
-        IO.OptionBuilder()
+        io.OptionBuilder()
             .setReconnectionDelayMax(10000)
             .setTransports(['websocket'])
             // ..setTransportOptions(
@@ -53,6 +53,8 @@ class AppSocketioService {
             .build(),
       );
 
+      // socket.connect();
+
       socket.onConnect((_) {
         AppLoggerCS.debugLog("[AppSocketioService][onConnect] Connection established");
         AppLoggerCS.debugLog('🔐 Session ID: ${socket.id}'); // ← this is the sid
@@ -63,6 +65,12 @@ class AppSocketioService {
       socket.onDisconnect((_) {
         AppLoggerCS.debugLog("[AppSocketioService][onDisconnect] Disconnect socket");
         isOn = false;
+      });
+
+      socket.onAnyOutgoing((event, data) {
+        AppLoggerCS.debugLog("[AppSocketioService][onAny] event $event");
+        // AppLoggerCS.debugLog("[AppSocketioService][onAny] data ${jsonEncode(data)}");
+        AppLoggerCS.debugLog("[AppSocketioService][onAny] data $data");
       });
 
       socket.onConnectError((error) {
@@ -84,7 +92,7 @@ class AppSocketioService {
   void listenToMessages(String eventName, Function(dynamic) onMessage) {
     socket.on(
       // 'new_message',
-      eventName, 
+      eventName,
       (data) {
         onMessage(data); // callback
       },
@@ -94,7 +102,7 @@ class AppSocketioService {
   void sendMessage(String eventName, Map<String, dynamic> message) {
     socket.emit(
       // 'send_message',
-      eventName, 
+      eventName,
       message,
     );
   }

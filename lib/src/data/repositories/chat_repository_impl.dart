@@ -8,7 +8,7 @@ import 'package:flutter_module1/src/data/models/response/send_chat_response_mode
 import 'package:flutter_module1/src/data/models/response/upload_media_response_model.dart';
 import 'package:flutter_module1/src/data/source/remote/chat_remote_source.dart';
 import 'package:flutter_module1/src/domain/repository/chat_repository.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:uuid/uuid.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
@@ -18,9 +18,9 @@ class ChatRepositoryImpl extends ChatRepository {
   static ChatRemoteSource remoteSource = ChatRemoteSourceImpl();
 
   @override
-  IO.Socket? startWebSocketIO() {
+  io.Socket? startWebSocketIO() {
     try {
-      IO.Socket? socket = remoteSource.startWebSocketIO();
+      io.Socket? socket = remoteSource.startWebSocketIO();
       return socket;
     } catch (e) {
       AppLoggerCS.debugLog("[ChatRepositoryImpl][startWebSocketIO] error: $e");
@@ -56,14 +56,14 @@ class ChatRepositoryImpl extends ChatRepository {
     required int limit,
     required String roomId,
     required int currentPage,
-    required String sesionId,
+    required String sessionId,
   }) async {
     try {
       Response? response = await remoteSource.getConversation(
         limit: limit,
         roomId: roomId,
         currentPage: currentPage,
-        sesionId: sesionId,
+        sesionId: sessionId,
       );
       if (response == null) {
         return null;

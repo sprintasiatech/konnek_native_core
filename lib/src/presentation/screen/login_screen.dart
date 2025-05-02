@@ -26,28 +26,50 @@ class _LoginScreenState extends State<LoginScreen> {
     // nameController.text = "test1";
     // emailController.text = "test1@test.com";
 
-    Future.delayed(
-      Duration(milliseconds: 250),
-      () {
-        // WidgetsBinding.instance.ensureVisualUpdate();
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          await AppController().getConfig(
-            onSuccess: () async {
-              // AppLoggerCS.debugLog("[getConfig] success");
-              setState(() {});
-            },
-            onFailed: (errorMessage) {
-              // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
-              setState(() {});
-            },
-          );
-        });
-      },
-    );
+    // nameController.text = "testX";
+    // emailController.text = "testX@test.com";
+
+    // nameController.text = "testT";
+    // emailController.text = "testT@test.com";
+
+    // nameController.text = "testZ";
+    // emailController.text = "testZ@test.com";
+
+    // nameController.text = "testV";
+    // emailController.text = "testV@test.com";
+
+    // nameController.text = "testJ";
+    // emailController.text = "testJ@test.com";
+
+    // nameController.text = "rabilsdkmobile";
+    // emailController.text = "rabisdk@mail.com";
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await AppController().getConfig(
+        onSuccess: () async {
+          // AppLoggerCS.debugLog("[getConfig] success");
+          setState(() {});
+        },
+        onFailed: (errorMessage) {
+          // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
+          setState(() {});
+        },
+      );
+    });
+  }
+
+  String nameErrorText = "";
+  void _validateName(String name) {
+    if (name.isEmpty) {
+      setState(() => nameErrorText = 'Name is required');
+    } else if (!name.isValidName) {
+      setState(() => nameErrorText = 'Enter a valid name');
+    } else {
+      setState(() => nameErrorText = "");
+    }
   }
 
   String errorText = "";
-
   void _validateEmail(String email) {
     if (email.isEmpty) {
       setState(() => errorText = 'Email is required');
@@ -136,6 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 45,
                     child: TextField(
+                      onChanged: (value) {
+                        _validateName(value);
+                      },
                       style: GoogleFonts.lato(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -164,6 +189,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  if (nameErrorText != "")
+                    Text(
+                      nameErrorText,
+                      style: GoogleFonts.lato(
+                        color: Colors.red,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   SizedBox(height: 15),
                   Text(
                     "Email",
@@ -246,18 +280,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       onTap: () async {
-                        if (errorText != "") {
+                        if (errorText != "" || nameErrorText != "") {
                           //
                         } else if (nameController.text.isEmpty || emailController.text.isEmpty) {
-                          errorText = "field is empty";
+                          errorText = "email field is empty";
+                          nameErrorText = "name field is empty";
                         } else {
                           errorText = "";
+                          nameErrorText = "";
                           await AppController()
                               .loadData(
                             name: nameController.text,
                             email: emailController.text,
                           )
                               .then((value) {
+                            AppController.isWebSocketStart = false;
                             Navigator.push(
                               context,
                               MaterialPageRoute(

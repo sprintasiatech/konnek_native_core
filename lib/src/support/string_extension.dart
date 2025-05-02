@@ -5,4 +5,6 @@ extension EmailValidator on String {
     );
     return emailRegex.hasMatch(this);
   }
+
+  bool get isValidName => RegExp(r'^[a-zA-Z]{1,20}$').hasMatch(this);
 }
