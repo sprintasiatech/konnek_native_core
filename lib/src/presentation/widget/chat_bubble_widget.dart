@@ -130,15 +130,15 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               ),
             ),
             SizedBox(height: 5),
-            Text(
-              // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-              widget.data.text ?? "null",
-              textAlign: TextAlign.left,
-              style: GoogleFonts.lato(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            // Text(
+            //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+            //   widget.data.text ?? "null",
+            //   textAlign: TextAlign.left,
+            //   style: GoogleFonts.lato(
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
           ],
         );
       } else if (widget.data.type == "image" || widget.data.type == "document") {
