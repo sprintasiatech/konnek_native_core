@@ -130,14 +130,26 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               ),
             ),
             SizedBox(height: 5),
+            Text(
+              // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+              widget.data.text ?? "null",
+              textAlign: TextAlign.left,
+              style: GoogleFonts.lato(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         );
       } else if (widget.data.type == "image" || widget.data.type == "document") {
         if (AppImagePickerServiceCS().isImageFile(AppFileHelper.getFileNameFromUrl(widget.data.payload!))) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width * 0.6,
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.6,
+            ),
             child: Column(
-              crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipRRect(
@@ -155,7 +167,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 Text(
                   // "${widget.data.payload}",
                   AppFileHelper.getFileNameFromUrl(widget.data.payload ?? ""),
-                  textAlign: chatCategoryValidation(widget.data) ? TextAlign.right : TextAlign.left,
+                  textAlign: TextAlign.left,
+                  // textAlign: chatCategoryValidation(widget.data) ? TextAlign.right : TextAlign.left,
                   style: GoogleFonts.lato(
                     color: Colors.black45,
                     fontSize: 10,
@@ -163,40 +176,79 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   ),
                 ),
                 SizedBox(height: 5),
+                Text(
+                  // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                  widget.data.text ?? "null",
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
           );
         } else {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Icon(
-                  Icons.file_copy_rounded,
-                  size: 60,
+          return SizedBox(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Icon(
+                    Icons.file_copy_rounded,
+                    color: Colors.black54,
+                    size: 100,
+                  ),
                 ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                // "${widget.data.payload}",
-                AppFileHelper.getFileNameFromUrl(widget.data.payload ?? ""),
-                textAlign: TextAlign.right,
-                style: GoogleFonts.lato(
-                  color: Colors.black45,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
+                SizedBox(height: 2),
+                Text(
+                  // "${widget.data.payload}",
+                  AppFileHelper.getFileNameFromUrl(widget.data.payload ?? ""),
+                  // textAlign: chatCategoryValidation(widget.data) ? TextAlign.right : TextAlign.left,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.lato(
+                    color: Colors.black45,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              SizedBox(height: 5),
-            ],
+                SizedBox(height: 5),
+                Text(
+                  // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                  widget.data.text ?? "null",
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           );
         }
       } else {
         return SizedBox();
       }
     } else {
-      return SizedBox();
+      return SizedBox(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+              widget.data.text ?? "null",
+              textAlign: TextAlign.left,
+              style: GoogleFonts.lato(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -209,62 +261,82 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         children: [
           // SizedBox(width: 10),
           Flexible(
-            child: InkWell(
-              onTap: () {
-                AppLoggerCS.debugLog("call here");
-                if (widget.data.payload != null || widget.data.payload != "") {
-                  if (widget.data.type == "image" || widget.data.type == "document") {
-                    // if ((jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".jpg") || (jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".png")) {
-                    // if (AppImagePickerServiceCS().isImageFile(getUrlName(widget.data.payload ?? ""))) {
-                    widget.openImageCallback?.call(jsonDecode(widget.data.payload ?? "")['url']);
-                    // }
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.8,
+              ),
+              child: InkWell(
+                onTap: () {
+                  AppLoggerCS.debugLog("call here");
+                  if (widget.data.payload != null || widget.data.payload != "") {
+                    if (widget.data.type == "image" || widget.data.type == "document") {
+                      // if ((jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".jpg") || (jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".png")) {
+                      // if (AppImagePickerServiceCS().isImageFile(getUrlName(widget.data.payload ?? ""))) {
+                      widget.openImageCallback?.call(jsonDecode(widget.data.payload ?? "")['url']);
+                      // }
+                    }
                   }
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  // color: Colors.purpleAccent.shade200.withOpacity(0.3),
-                  color: const Color(0xff2a55a4),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        typeChatHandler(),
-                        Text(
-                          // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-                          widget.data.text ?? "null",
-                          style: GoogleFonts.lato(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                },
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    // color: Colors.purpleAccent.shade200.withOpacity(0.3),
+                    color: const Color(0xff2a55a4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    // crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.7,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              typeChatHandler(),
+                              // Text(
+                              //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                              //   widget.data.text ?? "null",
+                              //   textAlign: TextAlign.left,
+                              //   style: GoogleFonts.lato(
+                              //     fontSize: 14,
+                              //     fontWeight: FontWeight.w500,
+                              //   ),
+                              // ),
+                              SizedBox(height: 5),
+                              IntrinsicWidth(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    // "15:29",
+                                    // "${DateTime.now().hour}:${DateTime.now().minute}",
+                                    DateFormat("hh:mm").format(widget.data.messageTime!.toLocal()),
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.white54,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          // "15:29",
-                          // "${DateTime.now().hour}:${DateTime.now().minute}",
-                          DateFormat("hh:mm").format(widget.data.messageTime!.toLocal()),
-                          style: GoogleFonts.lato(
-                            color: Colors.white54,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 10),
-                    Image.asset(
-                      handleIcon(widget.data.status ?? 0),
-                      color: Colors.white54,
-                      height: 15,
-                      width: 15,
-                    ),
-                  ],
+                      ),
+                      SizedBox(width: 10),
+                      Image.asset(
+                        handleIcon(widget.data.status ?? 0),
+                        color: Colors.white54,
+                        height: 15,
+                        width: 15,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -328,14 +400,14 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     typeChatHandler(),
-                    Text(
-                      widget.data.text ?? "null",
-                      // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-                      style: GoogleFonts.lato(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    // Text(
+                    //   widget.data.text ?? "null",
+                    //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                    //   style: GoogleFonts.lato(
+                    //     fontSize: 14,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
                     SizedBox(height: 5),
                     Text(
                       // "15:29",
