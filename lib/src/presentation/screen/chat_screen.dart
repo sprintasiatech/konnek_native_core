@@ -39,63 +39,63 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // AppController.isRoomClosed = true;
 
-    Future.delayed(Duration(milliseconds: 250), () {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _scrollToBottom();
+    // Future.delayed(Duration(milliseconds: 500), () {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _scrollToBottom();
 
-        if (AppController.isWebSocketStart == false) {
-          AppController.onSocketChatCalled = () async {
-            AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
-            await ChatLocalSource().setSocketReady(true);
-            AppController.socketReady = true;
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            if (mounted) {
-              setState(() {});
-            }
-          };
-          AppController.onSocketChatStatusCalled = () {
-            AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            if (mounted) {
-              setState(() {});
-            }
-          };
-          AppController.onSocketRoomHandoverCalled = () {
-            AppLoggerCS.debugLog("[onSocketRoomHandoverCalled]");
-            // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            // if (mounted) {
-            //   setState(() {});
-            // }
-          };
-          AppController.onSocketRoomClosedCalled = () {
-            AppLoggerCS.debugLog("[onSocketRoomClosedCalled]");
-            // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            AppController.isRoomClosed = true;
-            if (mounted) {
-              setState(() {});
-            }
-          };
-          AppController.onSocketCSATCalled = () {
-            AppLoggerCS.debugLog("[onSocketCSATCalled]");
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            AppController.isCSATOpen = true;
-            AppController.isRoomClosed = false;
-            if (mounted) {
-              setState(() {});
-            }
-          };
-          AppController.onSocketCSATCloseCalled = () {
-            AppLoggerCS.debugLog("[onSocketCSATCloseCalled]");
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            AppController.isCSATOpen = false;
-            AppController.isRoomClosed = true;
-            if (mounted) {
-              setState(() {});
-            }
-          };
-        }
-      });
+      if (AppController.isWebSocketStart == false) {
+        AppController.onSocketChatCalled = () async {
+          AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
+          await ChatLocalSource().setSocketReady(true);
+          AppController.socketReady = true;
+          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          if (mounted) {
+            setState(() {});
+          }
+        };
+        AppController.onSocketChatStatusCalled = () {
+          AppLoggerCS.debugLog("[onSocketChatStatusCalled]");
+          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          if (mounted) {
+            setState(() {});
+          }
+        };
+        AppController.onSocketRoomHandoverCalled = () {
+          AppLoggerCS.debugLog("[onSocketRoomHandoverCalled]");
+          // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          // if (mounted) {
+          //   setState(() {});
+          // }
+        };
+        AppController.onSocketRoomClosedCalled = () {
+          AppLoggerCS.debugLog("[onSocketRoomClosedCalled]");
+          // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          AppController.isRoomClosed = true;
+          if (mounted) {
+            setState(() {});
+          }
+        };
+        AppController.onSocketCSATCalled = () {
+          AppLoggerCS.debugLog("[onSocketCSATCalled]");
+          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          AppController.isCSATOpen = true;
+          AppController.isRoomClosed = false;
+          if (mounted) {
+            setState(() {});
+          }
+        };
+        AppController.onSocketCSATCloseCalled = () {
+          AppLoggerCS.debugLog("[onSocketCSATCloseCalled]");
+          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          AppController.isCSATOpen = false;
+          AppController.isRoomClosed = true;
+          if (mounted) {
+            setState(() {});
+          }
+        };
+      }
     });
+    // });
   }
 
   void _scrollToBottom() {
