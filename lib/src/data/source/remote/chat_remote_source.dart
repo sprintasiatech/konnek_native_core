@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter_module1/inter_module.dart';
 import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
@@ -54,7 +56,8 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
   @override
   Future<Response?> getConfig({required String clientId}) async {
     try {
-      String url = "$baseUrl/channel/config/$clientId/web";
+      String url = "$baseUrl/channel/config/$clientId/${checkPlatform()}";
+      // String url = "$baseUrl/channel/config/$clientId/web";
       Response? response = await apiService.call(
         url,
         method: MethodRequestCS.get,
@@ -94,7 +97,8 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
     required SendChatRequestModel request,
   }) async {
     try {
-      String url = "$baseUrl/webhook/widget/$clientId";
+      String url = "$baseUrl/webhook/${checkPlatform()}/$clientId";
+      // String url = "$baseUrl/webhook/widget/$clientId";
       Response? response = await apiService.call(
         url,
         request: request.toJson(),
@@ -128,5 +132,18 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
     } catch (e) {
       rethrow;
     }
+  }
+
+  String checkPlatform() {
+    String platform = "webhook";
+    if (Platform.isAndroid) {
+      platform = "android";
+    } else if (Platform.isIOS) {
+      platform = "ios";
+    } else {
+      platform = "web";
+    }
+    AppLoggerCS.debugLog("[checkPlatform]: $platform");
+    return platform;
   }
 }
