@@ -604,7 +604,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       SizedBox(width: 10),
                       Image.asset(
                         handleIcon(widget.data.status ?? 0),
-                        package: "konnek_flutter",
                         color: Colors.white54,
                         height: 15,
                         width: 15,
