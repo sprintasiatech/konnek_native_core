@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module1/assets/assets.dart';
+import 'package:flutter_module1/src/data/models/response/bot_payload_data_model.dart';
+import 'package:flutter_module1/src/data/models/response/carousel_payload_data_model.dart';
 import 'package:flutter_module1/src/data/models/response/csat_payload_data_model.dart';
 import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
 import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
 import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
+import 'package:flutter_module1/src/presentation/widget/carousel_chat_bubble_widget.dart';
 import 'package:flutter_module1/src/support/app_file_helper.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
@@ -14,12 +17,16 @@ class ChatBubbleWidget extends StatefulWidget {
   final DataGetConfig? dataGetConfig;
   final void Function(String srcImage)? openImageCallback;
   final void Function(BodyCsatPayload csatData, ConversationList chatData)? onChooseCsat;
+  final void Function(BodyBotPayload botData, ConversationList chatData)? onChooseBotChat;
+  final void Function(BodyCarouselPayload carouselData, ConversationList chatData)? onChooseCarousel;
 
   const ChatBubbleWidget({
     required this.data,
     required this.dataGetConfig,
     this.openImageCallback,
     this.onChooseCsat,
+    this.onChooseBotChat,
+    this.onChooseCarousel,
     super.key,
   });
 
@@ -39,6 +46,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   //   String data = (jsonDecode(widget.data.payload ?? "")['url'] as String).split("/").last;
   //   return data;
   // }
+  // PageController _pageController = PageController();
 
   bool chatCategoryValidation(ConversationList datas) {
     // Map<String, dynamic>? userData = await ChatLocalSource().getClientData();
@@ -76,13 +84,158 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   Widget typeChatHandler() {
     if (widget.data.payload != null && widget.data.payload != "") {
       if (widget.data.type == "button") {
-        CsatPayloadDataModel csatPayloadData = CsatPayloadDataModel.fromJson(jsonDecode(widget.data.payload!));
+        if (widget.data.session!.botStatus!) {
+          BotPayloadDataModel botPayloadData = BotPayloadDataModel.fromJson(jsonDecode(widget.data.payload!));
+          return Column(
+            crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 5),
+              Text(
+                "${widget.data.text}",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.lato(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 5),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: (botPayloadData.body == null || botPayloadData.body!.isEmpty) ? 0 : botPayloadData.body!.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        widget.onChooseBotChat?.call(
+                          botPayloadData.body![index],
+                          widget.data,
+                          // jsonDecode(widget.data.payload!),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff203080).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "${botPayloadData.body?[index].title}",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                            color: Colors.black87,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 8);
+                  },
+                ),
+              ),
+              SizedBox(height: 5),
+              // Text(
+              //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+              //   widget.data.text ?? "null",
+              //   textAlign: TextAlign.left,
+              //   style: GoogleFonts.lato(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
+            ],
+          );
+        } else {
+          CsatPayloadDataModel csatPayloadData = CsatPayloadDataModel.fromJson(jsonDecode(widget.data.payload!));
+          return Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 5),
+              IntrinsicWidth(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "${widget.data.text}",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.lato(
+                      color: Colors.black87,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
+              IntrinsicWidth(
+                child: Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: (csatPayloadData.body == null || csatPayloadData.body!.isEmpty) ? 0 : csatPayloadData.body!.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            widget.onChooseCsat?.call(
+                              csatPayloadData.body![index],
+                              widget.data,
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff203080).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              "${csatPayloadData.body?[index].title}",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: Colors.black87,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 8);
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
+              // Text(
+              //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+              //   widget.data.text ?? "null",
+              //   textAlign: TextAlign.left,
+              //   style: GoogleFonts.lato(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
+            ],
+          );
+        }
+      } else if (widget.data.type == "carousel") {
+        CarouselPayloadDataModel? carouselPayloadData = CarouselPayloadDataModel.fromJson(jsonDecode(widget.data.payload!));
         return Column(
           crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             SizedBox(height: 5),
             Text(
               "${widget.data.text}",
+              // "here",
               textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 color: Colors.black87,
@@ -91,44 +244,147 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               ),
             ),
             SizedBox(height: 5),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: (csatPayloadData.body == null || csatPayloadData.body!.isEmpty) ? 0 : csatPayloadData.body!.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      // AppController.isRoomClosed = false;
-                      widget.onChooseCsat?.call(
-                        csatPayloadData.body![index],
-                        widget.data,
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xff203080).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        "${csatPayloadData.body?[index].title}",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.lato(
-                          color: Colors.black87,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 8);
-                },
-              ),
+            CarouselChatBubbleWidget(
+              data: widget.data,
+              carouselPayloadData: carouselPayloadData,
+              onChooseCarousel: (carouselData, conversationList) {
+                widget.onChooseCarousel?.call(
+                  carouselData,
+                  conversationList,
+                );
+              },
             ),
+            // SizedBox.expand(
+            // StatefulBuilder(builder: (context, setState) {
+            //   int _currentPage = 0;
+            //   PageController _pageController = PageController();
+            //   return Stack(
+            //     children: [
+            //       SizedBox(
+            //         // width: MediaQuery.of(context).size.width * 0.6,
+            //         height: 350,
+            //         child: PageView.builder(
+            //           // child: ListView.separated(
+            //           controller: _pageController,
+            //           // shrinkWrap: true,
+            //           scrollDirection: Axis.horizontal,
+            //           itemCount: (carouselPayloadData.body == null || carouselPayloadData.body!.isEmpty) ? 0 : carouselPayloadData.body!.length,
+            //           itemBuilder: (context, index) {
+            //             return SingleChildScrollView(
+            //               child: Column(
+            //                 children: [
+            //                   ClipRRect(
+            //                     borderRadius: BorderRadius.circular(8.0),
+            //                     child: Image.network(
+            //                       "${carouselPayloadData.body?[index].mediaUrl}",
+            //                       // AppFileHelper.getUrlName(widget.data.payload ?? ""),
+            //                       // AppFileHelper.getUrlName(widget.data.payload ?? ""),
+            //                       height: 200,
+            //                       // width: 100,
+            //                       fit: BoxFit.cover,
+            //                     ),
+            //                   ),
+            //                   SizedBox(height: 10),
+            //                   Text(
+            //                     "${carouselPayloadData.body?[index].title}",
+            //                     textAlign: TextAlign.center,
+            //                     style: GoogleFonts.lato(
+            //                       color: Colors.black87,
+            //                       fontSize: 16,
+            //                       fontWeight: FontWeight.w700,
+            //                     ),
+            //                   ),
+            //                   SizedBox(height: 5),
+            //                   Text(
+            //                     "${carouselPayloadData.body?[index].description}",
+            //                     textAlign: TextAlign.center,
+            //                     style: GoogleFonts.lato(
+            //                       color: Colors.black87,
+            //                       fontSize: 14,
+            //                       fontWeight: FontWeight.w500,
+            //                     ),
+            //                   ),
+            //                   SizedBox(height: 15),
+            //                   InkWell(
+            //                     onTap: () {
+            //                       // AppController.isRoomClosed = false;
+            //                       widget.onChooseCarousel?.call(
+            //                         carouselPayloadData.body![index],
+            //                         widget.data,
+            //                       );
+            //                     },
+            //                     child: Container(
+            //                       padding: EdgeInsets.symmetric(
+            //                         vertical: 6,
+            //                         horizontal: 12,
+            //                       ),
+            //                       height: 40,
+            //                       decoration: BoxDecoration(
+            //                         color: const Color(0xff203080).withOpacity(0.1),
+            //                         borderRadius: BorderRadius.circular(8),
+            //                       ),
+            //                       child: Text(
+            //                         "${carouselPayloadData.body?[index].title}",
+            //                         textAlign: TextAlign.center,
+            //                         style: GoogleFonts.lato(
+            //                           color: Colors.black87,
+            //                           fontSize: 14,
+            //                           fontWeight: FontWeight.w500,
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             );
+            //           },
+            //           // separatorBuilder: (context, index) {
+            //           //   return SizedBox(width: 10);
+            //           // },
+            //         ),
+            //       ),
+            //       Container(
+            //         // color: Colors.red,
+            //         height: 350,
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //           children: [
+            //             InkWell(
+            //               onTap: () {
+            //                 if (_pageController.hasClients) {
+            //                   _pageController.previousPage(
+            //                     duration: const Duration(milliseconds: 400),
+            //                     curve: Curves.easeInOut,
+            //                   );
+            //                 }
+            //               },
+            //               child: Icon(
+            //                 Icons.arrow_circle_left_outlined,
+            //                 size: 50,
+            //                 color: Colors.grey,
+            //               ),
+            //             ),
+            //             InkWell(
+            //               onTap: () {
+            //                 if (_pageController.hasClients) {
+            //                   _pageController.nextPage(
+            //                     duration: const Duration(milliseconds: 400),
+            //                     curve: Curves.easeInOut,
+            //                   );
+            //                 }
+            //               },
+            //               child: Icon(
+            //                 Icons.arrow_circle_right_outlined,
+            //                 size: 50,
+            //                 color: Colors.grey,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ],
+            //   );
+            // }),
             SizedBox(height: 5),
             // Text(
             //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
@@ -230,7 +486,24 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
           );
         }
       } else {
-        return SizedBox();
+        // Type: text
+        // AppLoggerCS.debugLog("Panggil di sini: ${widget.data.text}");
+        return SizedBox(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
+                widget.data.text ?? "null",
+                textAlign: TextAlign.left,
+                style: GoogleFonts.lato(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
       }
     } else {
       return SizedBox(
@@ -331,6 +604,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       SizedBox(width: 10),
                       Image.asset(
                         handleIcon(widget.data.status ?? 0),
+                        package: "konnek_flutter",
                         color: Colors.white54,
                         height: 15,
                         width: 15,

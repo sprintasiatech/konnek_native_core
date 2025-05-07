@@ -32,6 +32,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
   late List<ChatItem> _chatItems;
 
+  bool showToggleDownButton = false;
+
+  void scrollListenerFunc() {
+    print("Scroll position: ${_scrollController.position.pixels}");
+    if (_scrollController.position.pixels > 100.0) {
+      showToggleDownButton = true;
+    } else {
+      showToggleDownButton = false;
+    }
+    setState(() {});
+    AppLoggerCS.debugLog("showToggleDownButton: $showToggleDownButton");
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +52,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // AppController.isRoomClosed = true;
 
-    // Future.delayed(Duration(milliseconds: 500), () {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _scrollToBottom();
 
@@ -74,6 +86,8 @@ class _ChatScreenState extends State<ChatScreen> {
           if (mounted) {
             setState(() {});
           }
+          AppController.clearRoomClosed();
+          disconnectSocket();
         };
         AppController.onSocketCSATCalled = () {
           AppLoggerCS.debugLog("[onSocketCSATCalled]");
@@ -92,10 +106,11 @@ class _ChatScreenState extends State<ChatScreen> {
           if (mounted) {
             setState(() {});
           }
+          AppController.clearRoomClosed();
+          disconnectSocket();
         };
       }
     });
-    // });
   }
 
   void _scrollToBottom() {
@@ -212,6 +227,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     body: SmartRefresher(
                       reverse: true,
                       controller: refreshController,
+                      scrollController: _scrollController,
                       enablePullUp: true,
                       enablePullDown: false,
                       onLoading: () async {
@@ -229,101 +245,178 @@ class _ChatScreenState extends State<ChatScreen> {
                           refreshController.loadComplete();
                         });
                       },
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          child: Column(
-                            children: [
-                              Stack(
+                      child: Stack(
+                        children: [
+                          if (showToggleDownButton)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: InkWell(
+                                    onTap: () {
+                                      AppLoggerCS.debugLog("up");
+                                    },
+                                    child: Container(
+                                      // color: Colors.blue,
+                                      margin: EdgeInsets.all(20),
+                                      height: 40,
+                                      width: 40,
+                                      child: CircleAvatar(
+                                        backgroundColor: const Color(0xff2a55a4),
+                                        child: Icon(
+                                          Icons.keyboard_arrow_down_outlined,
+                                          size: 30,
+                                          color: Colors.white,
+                                          // color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  // child: Center(
+                                  //   child: SizedBox(
+                                  //     height: 50,
+                                  //     width: 50,
+                                  //     child: CircularProgressIndicator(),
+                                  //   ),
+                                  // ),
+                                ),
+                                SizedBox(
+                                  // color: Colors.purple,
+                                  // height: 100,
+                                  height: kToolbarHeight + 30 + ((uploadFile != null) ? 90 : 0),
+                                ),
+                              ],
+                            ),
+                          SingleChildScrollView(
+                            // controller: _scrollController,
+                            child: Container(
+                              padding: EdgeInsets.all(12),
+                              child: Column(
                                 children: [
-                                  ListView.builder(
-                                    reverse: false,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    // controller: _scrollController,
-                                    itemCount: _chatItems.length,
-                                    padding: EdgeInsets.all(0),
-                                    itemBuilder: (context, index) {
-                                      final item = _chatItems[index];
+                                  Stack(
+                                    children: [
+                                      ListView.builder(
+                                        reverse: false,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        // controller: _scrollController,
+                                        itemCount: _chatItems.length,
+                                        padding: EdgeInsets.all(0),
+                                        itemBuilder: (context, index) {
+                                          final item = _chatItems[index];
 
-                                      if (item is DateSeparator) {
-                                        return Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 8,
-                                            ),
-                                            child: Text(
-                                              item.label,
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold,
+                                          if (item is DateSeparator) {
+                                            return Center(
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                child: Text(
+                                                  item.label,
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        );
-                                      } else if (item is ConversationList) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 5,
-                                          ),
-                                          child: ChatBubbleWidget(
-                                            onChooseCsat: (csatData, chatPayload) {
-                                              AppController().emitCsat(
-                                                postbackDataChosen: csatData,
-                                                chatData: chatPayload,
-                                                onSent: () {
-                                                  AppLoggerCS.debugLog("[onSent]");
-                                                  _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                                                  if (mounted) {
-                                                    setState(() {});
+                                            );
+                                          } else if (item is ConversationList) {
+                                            return Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 5,
+                                              ),
+                                              child: ChatBubbleWidget(
+                                                onChooseBotChat: (botData, chatData) {
+                                                  AppController().emitBotChat(
+                                                    botDataChosen: botData,
+                                                    chatData: chatData,
+                                                    // plainData: plainData,
+                                                    onSent: () {
+                                                      AppLoggerCS.debugLog("[onSent][emitBotChat]");
+                                                      _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+                                                      if (mounted) {
+                                                        setState(() {});
+                                                      }
+                                                    },
+                                                  );
+                                                },
+                                                onChooseCsat: (csatData, chatPayload) {
+                                                  AppController().emitCsat(
+                                                    postbackDataChosen: csatData,
+                                                    chatData: chatPayload,
+                                                    onSent: () {
+                                                      AppLoggerCS.debugLog("[onSent][emitCsat]");
+                                                      _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+                                                      if (mounted) {
+                                                        setState(() {});
+                                                      }
+                                                    },
+                                                    onFailed: () {
+                                                      AppController.clear();
+                                                      ChatLocalSource.localServiceHive.user.clear();
+                                                      Navigator.pop(context);
+                                                    },
+                                                  );
+                                                },
+                                                onChooseCarousel: (carouselData, chatPayload) {
+                                                  AppController().emitCarousel(
+                                                    carouselDataChosen: carouselData,
+                                                    chatData: chatPayload,
+                                                    onSent: () {
+                                                      AppLoggerCS.debugLog("[onSent][emitCarousel]");
+                                                      _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+                                                      if (mounted) {
+                                                        setState(() {});
+                                                      }
+                                                    },
+                                                  );
+                                                },
+                                                openImageCallback: (src) async {
+                                                  if (src != "") {
+                                                    AppLoggerCS.debugLog("src: $src");
+                                                    if (AppImagePickerServiceCS().isImageFile(src)) {
+                                                      setState(() {
+                                                        openImage = true;
+                                                        srcImage = src;
+                                                      });
+                                                    } else {
+                                                      await _launchUrl(src);
+                                                    }
                                                   }
                                                 },
-                                              );
-                                            },
-                                            openImageCallback: (src) async {
-                                              if (src != "") {
-                                                AppLoggerCS.debugLog("src: $src");
-                                                if (AppImagePickerServiceCS().isImageFile(src)) {
-                                                  setState(() {
-                                                    openImage = true;
-                                                    srcImage = src;
-                                                  });
-                                                } else {
-                                                  await _launchUrl(src);
-                                                }
-                                              }
-                                            },
-                                            data: item,
-                                            dataGetConfig: AppController.dataGetConfigValue,
-                                          ),
-                                        );
-                                      }
+                                                data: item,
+                                                dataGetConfig: AppController.dataGetConfigValue,
+                                              ),
+                                            );
+                                          }
 
-                                      return SizedBox.shrink();
-                                    },
+                                          return SizedBox.shrink();
+                                        },
+                                      ),
+                                      // if (isLoading)
+                                      //   Container(
+                                      //     width: MediaQuery.of(context).size.width,
+                                      //     height: MediaQuery.of(context).size.height,
+                                      //     color: Colors.black38,
+                                      //     child: Center(
+                                      //       child: SizedBox(
+                                      //         height: 50,
+                                      //         width: 50,
+                                      //         child: CircularProgressIndicator(),
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                    ],
                                   ),
-                                  // if (isLoading)
-                                  //   Container(
-                                  //     width: MediaQuery.of(context).size.width,
-                                  //     height: MediaQuery.of(context).size.height,
-                                  //     color: Colors.black38,
-                                  //     child: Center(
-                                  //       child: SizedBox(
-                                  //         height: 50,
-                                  //         width: 50,
-                                  //         child: CircularProgressIndicator(),
-                                  //       ),
-                                  //     ),
-                                  //   ),
+                                  SizedBox(
+                                    height: kToolbarHeight + 30 + ((uploadFile != null) ? 90 : 0),
+                                  ),
                                 ],
                               ),
-                              SizedBox(
-                                height: kToolbarHeight + 30 + ((uploadFile != null) ? 90 : 0),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                     resizeToAvoidBottomInset: true,
@@ -588,6 +681,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     SizedBox(width: 5),
                                     Image.asset(
                                       Assets.icKonnek,
+                                      package: "konnek_flutter",
                                       height: 16,
                                     ),
                                   ],
@@ -678,11 +772,16 @@ class _ChatScreenState extends State<ChatScreen> {
       AppController().emitCsatText(
         text: textController.text,
         onSent: () {
-          AppLoggerCS.debugLog("[onSent]");
+          AppLoggerCS.debugLog("[onSent][emitCsatText]");
           _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
           if (mounted) {
             setState(() {});
           }
+        },
+        onFailed: () async {
+          AppController.clear();
+          ChatLocalSource.localServiceHive.user.clear();
+          Navigator.pop(context);
         },
       );
     } else {

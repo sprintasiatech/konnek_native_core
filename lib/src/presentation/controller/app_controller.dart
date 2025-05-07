@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter_module1/inter_module.dart';
 import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
+import 'package:flutter_module1/src/data/models/response/bot_payload_data_model.dart';
+import 'package:flutter_module1/src/data/models/response/carousel_payload_data_model.dart';
 import 'package:flutter_module1/src/data/models/response/csat_payload_data_model.dart';
 import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
 import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
@@ -33,6 +35,15 @@ class AppController {
     limit = 20;
     conversationData = null;
     conversationList = [];
+    conversationDataFirstChat = null;
+    conversationListFirstChat = [];
+    InterModule.accessToken = "";
+  }
+
+  static void clearRoomClosed() {
+    currentPage = 1;
+    limit = 20;
+    InterModule.accessToken = "";
   }
 
   Future<void> startWebSocketIO({
@@ -90,11 +101,15 @@ class AppController {
         AppLoggerCS.debugLog("[socket][chat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
 
+        sessionId = socket.session!.id!;
+        roomId = socket.session!.roomId!;
+
         ConversationList? chatModel;
         chatModel = null;
 
         chatModel = ConversationList(
           session: SessionGetConversation(
+            botStatus: socket.session?.botStatus,
             agent: UserGetConversation(
               id: socket.agent?.userId,
               name: socket.agent?.name,
@@ -118,12 +133,49 @@ class AppController {
         );
         conversationList.add(chatModel);
         onSocketChatCalled.call();
+
+        DateTime currentDateTime = DateTime.now();
+        AppSocketioService.socket.emit(
+          "chat.status",
+          {
+            "data": {
+              "message_id": conversationList.last.messageId,
+              "room_id": conversationList.last.roomId,
+              "session_id": conversationList.last.sessionId,
+              "status": 2,
+              "times": (currentDateTime.millisecondsSinceEpoch / 1000).floor(),
+              "timestamp": getDateTimeFormatted(value: currentDateTime),
+            },
+          },
+        );
+
+        _getConversation(
+          roomId: socket.session!.roomId!,
+          onSuccess: () {
+            onSocketChatCalled.call();
+          },
+          onFailed: (errorMessage) {
+            onFailed?.call(errorMessage);
+          },
+        );
+        // onSocketChatCalled.call();
       });
 
       AppSocketioService.socket.on("chat.status", (output) async {
         AppLoggerCS.debugLog("[socket][chat.status] output: ${jsonEncode(output)}");
         SocketChatStatusResponseModel socket = SocketChatStatusResponseModel.fromJson(output);
-        conversationList = conversationList.map((element) {
+        sessionId = socket.data!.sessionId!;
+        roomId = socket.data!.roomId!;
+
+        // conversationList = conversationList.map((element) {
+        //   if (element.messageId == socket.data?.messageId) {
+        //     element.status = socket.data?.status;
+        //     return element;
+        //   } else {
+        //     return element;
+        //   }
+        // }).toList();
+        conversationList.map((element) {
           if (element.messageId == socket.data?.messageId) {
             element.status = socket.data?.status;
             return element;
@@ -131,6 +183,7 @@ class AppController {
             return element;
           }
         }).toList();
+        conversationList = removeDuplicatesById(conversationList);
         onSocketChatStatusCalled.call();
       });
 
@@ -145,17 +198,14 @@ class AppController {
       AppSocketioService.socket.on("room.closed", (output) async {
         AppLoggerCS.debugLog("[socket][room.closed] output: ${jsonEncode(output)}");
         SocketRoomClosedResponseModel socket = SocketRoomClosedResponseModel.fromJson(output);
+        isWebSocketStart = false;
         onSocketRoomClosedCalled.call();
       });
 
       AppSocketioService.socket.on("csat", (output) async {
         AppLoggerCS.debugLog("[socket][csat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
-        // AppLoggerCS.debugLog("data payload: ${socket.message!.payload!}");
-        // AppLoggerCS.debugLog("data payload: ${jsonDecode(socket.message!.payload!)}");
-        // dynamic data = jsonDecode(socket.message!.payload!);
-        // AppLoggerCS.debugLog("data payload: $data");
-        // CsatPayloadDataModel csatData = CsatPayloadDataModel.fromJson(jsonDecode(socket.message!.payload!));
+
         sessionId = socket.session!.id!;
         roomId = socket.session!.roomId!;
 
@@ -164,6 +214,7 @@ class AppController {
 
         chatModel = ConversationList(
           session: SessionGetConversation(
+            botStatus: socket.session?.botStatus,
             agent: UserGetConversation(
               id: socket.agent?.userId,
               name: socket.agent?.name,
@@ -192,6 +243,7 @@ class AppController {
 
       AppSocketioService.socket.on("csat.close", (output) async {
         AppLoggerCS.debugLog("[socket][csat.close] output: ${jsonEncode(output)}");
+        isWebSocketStart = false;
         onSocketCSATCloseCalled.call();
       });
     } catch (e) {
@@ -203,131 +255,193 @@ class AppController {
   static String sessionId = "";
   static String roomId = "";
 
-  void emitCsat({
-    required BodyCsatPayload postbackDataChosen,
+  void emitBotChat({
+    required BodyBotPayload botDataChosen,
     required ConversationList chatData,
     void Function()? onSent,
   }) {
     String uuid = const Uuid().v4();
     Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
+    DateTime currentDateValue = DateTime.now();
     Map<String, dynamic> dataEmit = {
       "message_id": uuid,
       "reply_id": null,
       "ttl": 5,
-      // "time": getDateTimeFormatted(),
-      "time": DateTime.now().toUtc().toIso8601String(),
-      // "type": "postback",
-      "type": postbackDataChosen.type,
-      "text": postbackDataChosen.title,
-      // "postback": postbackDataChosen.toJson(),
-      "postback": {
-        "type": postbackDataChosen.type,
-        "key": postbackDataChosen.key,
-        "value": postbackDataChosen.value,
-        "title": postbackDataChosen.title,
-        "description": postbackDataChosen.description,
-        "media_url": postbackDataChosen.mediaUrl,
-        "url": postbackDataChosen.url,
-      },
+      "time": currentDateValue.toUtc().toIso8601String(),
+      "type": botDataChosen.type,
+      "text": botDataChosen.title,
+      "postback": botDataChosen.toJson(),
       "channel_code": checkPlatform(),
       "from_type": 1,
-      // "room_id": chatData.session?.roomId,
-      // "session_id": chatData.session?.id,
       "room_id": jwtValue["payload"]["data"]["room_id"],
-      // "session_id": jwtValue["payload"]["data"]["session_id"],
-      "session_id": sessionId,
+      "session_id": jwtValue["payload"]["data"]["session_id"],
     };
 
-    AppLoggerCS.debugLog("dataEmit: ${jsonEncode(dataEmit)}");
+    AppLoggerCS.debugLog("[emitBotChat] dataEmit: ${jsonEncode(dataEmit)}");
 
     AppSocketioService.socket.emit(
       "chat",
       dataEmit,
-      // ack: (values) {
-      //   AppLoggerCS.debugLog("acknowledge: $values");
-      // },
     );
 
-    String uuid2 = const Uuid().v4();
-
-    ConversationList? chatModel;
-    chatModel = null;
-
-    chatModel = ConversationList(
-      fromType: "1",
-      text: postbackDataChosen.title,
-      type: "postback",
-      messageId: uuid2,
-      status: 2,
-      messageTime: DateTime.now().toUtc(),
-    );
-    conversationList.add(chatModel);
+    // ConversationList? chatModel = ConversationList(
+    //   fromType: "1",
+    //   text: botDataChosen.title,
+    //   type: "postback",
+    //   messageId: uuid,
+    //   status: 2,
+    //   messageTime: currentDateValue.toUtc(),
+    // );
+    // conversationList.add(chatModel);
     onSent?.call();
+  }
 
-// {
-//   "message_id": "1cfc055a-4b91-4b91-8825-69c0483a0148",
-//   "reply_id": null,
-//   "ttl": 5,
-//   "time": "2025-04-30T17:42:51+07:00",
-//   "type": "postback",
-//   "text": "",
-//   "postback": {
-//     "type": "postback",
-//     "key": "csat:b035e66e-6233-433f-8444-acad77b56f98:0",
-//     "value": "",
-//     "title": "",
-//     "description": "",
-//     "media_url": "",
-//     "url": ""
-//   },
-//   "channel_code": "web",
-//   "from_type": 1,
-//   "room_id": "a5a8eb2e-2550-4c28-ad6e-e42f5178b146",
-//   "session_id": "2792eb5e-4266-48a5-b28a-e241a65c932a"
-// }
+  void emitCarousel({
+    required BodyCarouselPayload carouselDataChosen,
+    required ConversationList chatData,
+    void Function()? onSent,
+  }) {
+    String uuid = const Uuid().v4();
+    Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
+    DateTime currentDateValue = DateTime.now();
+    Map<String, dynamic> dataEmit = {
+      "message_id": uuid,
+      "reply_id": null,
+      "ttl": 5,
+      "time": currentDateValue.toUtc().toIso8601String(),
+      "type": carouselDataChosen.actions![0].type,
+      "text": carouselDataChosen.actions![0].title,
+      "postback": carouselDataChosen.actions![0].toJson(),
+      "channel_code": checkPlatform(),
+      "from_type": 1,
+      "room_id": jwtValue["payload"]["data"]["room_id"],
+      "session_id": jwtValue["payload"]["data"]["session_id"],
+    };
+
+    AppLoggerCS.debugLog("[emitCarousel] dataEmit: ${jsonEncode(dataEmit)}");
+
+    AppSocketioService.socket.emit(
+      "chat",
+      dataEmit,
+    );
+
+    // ConversationList? chatModel = ConversationList(
+    //   fromType: "1",
+    //   text: carouselDataChosen.actions?[0].title,
+    //   type: carouselDataChosen.actions?[0].type,
+    //   messageId: uuid,
+    //   status: 2,
+    //   messageTime: currentDateValue.toUtc(),
+    // );
+    // conversationList.add(chatModel);
+    onSent?.call();
+  }
+
+  void emitCsat({
+    required BodyCsatPayload postbackDataChosen,
+    required ConversationList chatData,
+    void Function()? onSent,
+    void Function()? onFailed,
+  }) {
+    try {
+      String uuid = const Uuid().v4();
+      Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
+      DateTime currentDateValue = DateTime.now();
+      Map<String, dynamic> dataEmit = {
+        "message_id": uuid,
+        "reply_id": null,
+        "ttl": 5,
+        "time": currentDateValue.toUtc().toIso8601String(),
+        "type": "postback",
+        // "type": (postbackDataChosen.type != "" || postbackDataChosen.type != null) ? postbackDataChosen.type : "button",
+        "text": postbackDataChosen.title,
+        "postback": {
+          "type": postbackDataChosen.type,
+          "key": postbackDataChosen.key,
+          "value": postbackDataChosen.value,
+          "title": postbackDataChosen.title,
+          "description": postbackDataChosen.description,
+          "media_url": postbackDataChosen.mediaUrl,
+          "url": postbackDataChosen.url,
+        },
+        "channel_code": checkPlatform(),
+        "from_type": 1,
+        "room_id": jwtValue["payload"]["data"]["room_id"],
+        "session_id": jwtValue["payload"]["data"]["session_id"],
+      };
+
+      AppLoggerCS.debugLog("[emitCsat] dataEmit: ${jsonEncode(dataEmit)}");
+
+      AppSocketioService.socket.emit(
+        "chat",
+        dataEmit,
+      );
+
+      ConversationList? chatModel;
+      chatModel = null;
+
+      chatModel = ConversationList(
+        fromType: "1",
+        text: postbackDataChosen.title,
+        type: "postback",
+        messageId: uuid,
+        status: 2,
+        messageTime: currentDateValue.toUtc(),
+      );
+      conversationList.add(chatModel);
+      onSent?.call();
+    } catch (e) {
+      AppController.isCSATOpen = false;
+      onFailed?.call();
+    }
   }
 
   void emitCsatText({
     required String text,
     void Function()? onSent,
+    void Function()? onFailed,
   }) {
-    String uuid = const Uuid().v4();
-    Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
-    Map<String, dynamic> dataEmit = {
-      "message_id": uuid,
-      "reply_id": null,
-      "ttl": 5,
-      "time": DateTime.now().toUtc().toIso8601String(),
-      "type": "text",
-      "text": text,
-      "channel_code": checkPlatform(),
-      "from_type": 1,
-      "room_id": jwtValue["payload"]["data"]["room_id"],
-      "session_id": sessionId,
-    };
+    try {
+      String uuid = const Uuid().v4();
+      Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
+      DateTime currentDateValue = DateTime.now();
+      Map<String, dynamic> dataEmit = {
+        "message_id": uuid,
+        "reply_id": null,
+        "ttl": 5,
+        "time": currentDateValue.toUtc().toIso8601String(),
+        "type": "text",
+        "text": text,
+        "channel_code": checkPlatform(),
+        "from_type": 1,
+        "room_id": jwtValue["payload"]["data"]["room_id"],
+        "session_id": jwtValue["payload"]["data"]["session_id"],
+      };
 
-    AppLoggerCS.debugLog("dataEmit emitCsatText: ${jsonEncode(dataEmit)}");
+      AppLoggerCS.debugLog("[emitCsatText] dataEmit: ${jsonEncode(dataEmit)}");
 
-    AppSocketioService.socket.emit(
-      "chat",
-      dataEmit,
-    );
+      AppSocketioService.socket.emit(
+        "chat",
+        dataEmit,
+      );
 
-    String uuid2 = const Uuid().v4();
+      ConversationList? chatModel;
+      chatModel = null;
 
-    ConversationList? chatModel;
-    chatModel = null;
-
-    chatModel = ConversationList(
-      fromType: "1",
-      text: text,
-      type: "text",
-      messageId: uuid2,
-      status: 2,
-      messageTime: DateTime.now().toUtc(),
-    );
-    conversationList.add(chatModel);
-    onSent?.call();
+      chatModel = ConversationList(
+        fromType: "1",
+        text: text,
+        type: "text",
+        messageId: uuid,
+        status: 2,
+        messageTime: currentDateValue.toUtc(),
+      );
+      conversationList.add(chatModel);
+      onSent?.call();
+    } catch (e) {
+      AppController.isCSATOpen = false;
+      onFailed?.call();
+    }
   }
 
   Future<void> getConfig({
@@ -431,143 +545,140 @@ class AppController {
   }) async {
     isLoading = true;
     try {
-      Map<String, dynamic>? localDataFormatted = await ChatLocalSource().getClientData();
+      if (InterModule.accessToken == "") {
+        Map<String, dynamic>? localDataFormatted = await ChatLocalSource().getClientData();
 
-      String uuid = const Uuid().v4();
-      ConversationList? chatModel0;
-      chatModel0 = null;
-      chatModel0 = ConversationList(
-        fromType: "1",
-        text: text,
-        messageId: uuid,
-        messageTime: DateTime.now().toUtc(),
-        status: 2,
-      );
-      conversationList.add(chatModel0);
-      onChatSentFirst?.call();
-
-      SendChatRequestModel requestBody = SendChatRequestModel(
-        name: localDataFormatted?["name"],
-        text: text,
-        username: localDataFormatted?["username"],
-      );
-
-      SendChatResponseModel? output = await ChatRepositoryImpl().sendChat(
-        clientId: InterModule.clientId,
-        request: requestBody,
-      );
-      // AppLoggerCS.debugLog("output: ${output?.toJson()}");
-      if (output == null) {
-        onFailed?.call("empty data #1110");
-        return;
-      }
-      if (output.meta == null) {
-        onFailed?.call("empty data #1111");
-        return;
-      }
-      if (output.meta?.code == 403) {
         String uuid = const Uuid().v4();
-        ConversationList? chatModel;
-        chatModel = null;
-
-        chatModel = ConversationList(
-          fromType: "2",
-          text: "${output.meta?.message}",
+        ConversationList? chatModel0;
+        chatModel0 = null;
+        chatModel0 = ConversationList(
+          fromType: "1",
+          text: text,
           messageId: uuid,
           messageTime: DateTime.now().toUtc(),
+          status: 2,
         );
-        conversationList.add(chatModel);
-        onGreetingsFailed?.call(output.meta!);
-        return;
-      }
-      if (output.meta?.code != 200) {
-        onFailed?.call("${output.meta?.message}");
-        return;
-      }
-      if (output.meta?.code == 200) {
-        Map jwtValue = JwtConverter().decodeJwt(output.data!.token!);
-        // AppLoggerCS.debugLog("jwtValue: ${jsonEncode(jwtValue)}");
+        conversationList.add(chatModel0);
+        onChatSentFirst?.call();
 
-        await ChatLocalSource().setSupportData(output.data!);
+        SendChatRequestModel requestBody = SendChatRequestModel(
+          name: localDataFormatted?["name"],
+          text: text,
+          username: localDataFormatted?["username"],
+        );
 
-        InterModule.accessToken = output.data!.token!;
-        await ChatLocalSource().setAccessToken(output.data!.token!);
-
-        if (!isWebSocketStart) {
-          await startWebSocketIO();
-          await handleWebSocketIO();
-          isWebSocketStart = true;
+        SendChatResponseModel? output = await ChatRepositoryImpl().sendChat(
+          clientId: InterModule.clientId,
+          request: requestBody,
+        );
+        // AppLoggerCS.debugLog("output: ${output?.toJson()}");
+        if (output == null) {
+          onFailed?.call("empty data #1110");
+          return;
         }
+        if (output.meta == null) {
+          onFailed?.call("empty data #1111");
+          return;
+        }
+        if (output.meta?.code == 403) {
+          conversationListFirstChat = removeDuplicatesById(conversationListFirstChat);
+          String uuid = const Uuid().v4();
+          ConversationList? chatModel;
+          chatModel = null;
 
-        // String uuid = const Uuid().v4();
-        // AppSocketioService.socket.emit(
-        //   "chat",
-        //   {
-        //     "message_id": uuid,
-        //     "reply_id": null,
-        //     "ttl": 5,
-        //     "text": "text",
-        //     // "text": text,
-        //     "time": getDateTimeFormatted(),
-        //     "type": text,
-        //     // "type": "text",
-        //     "room_id": jwtValue["payload"]["data"]["room_id"],
-        //     "session_id": jwtValue["payload"]["data"]["session_id"],
-        //     "channel_code": checkPlatform(),
-        //     "reply_token": "",
-        //     "from_type": 1,
-        //     // "data": {
-        //     //   {
-        //     //     "message_id": uuid,
-        //     //     "reply_id": null,
-        //     //     "ttl": 5,
-        //     //     "text": "write",
-        //     //     "time": getDateTimeFormatted(),
-        //     //     "type": "text",
-        //     //     "room_id": jwtValue["payload"]["data"]["room_id"],
-        //     //     "session_id": jwtValue["payload"]["data"]["session_id"],
-        //     //     "channel_code": checkPlatform(),
-        //     //     "reply_token": "",
-        //     //     "from_type": 1,
-        //     //   },
-        //     // },
-        //   },
-        //   // ack: (values) {
-        //   //   AppLoggerCS.debugLog("acknowledge 0: $values");
-        //   // },
-        // );
+          chatModel = ConversationList(
+            fromType: "2",
+            text: "${output.meta?.message}",
+            messageId: uuid,
+            messageTime: DateTime.now().toUtc(),
+          );
+          conversationList.add(chatModel);
+          conversationListFirstChat.addAll(conversationList);
+          onGreetingsFailed?.call(output.meta!);
+          return;
+        }
+        if (output.meta?.code != 200) {
+          onFailed?.call("${output.meta?.message}");
+          return;
+        }
+        if (output.meta?.code == 200) {
+          Map jwtValue = JwtConverter().decodeJwt(output.data!.token!);
+          // AppLoggerCS.debugLog("jwtValue: ${jsonEncode(jwtValue)}");
 
-        conversationData = null;
-        conversationList = [];
-        currentPage = 1;
+          await ChatLocalSource().setSupportData(output.data!);
 
-        _getConversation(
-          roomId: jwtValue["payload"]["data"]["room_id"],
-          onSuccess: () async {
-            // AppLoggerCS.debugLog("conversationList.last: ${jsonEncode(conversationList.last)}");
-            if (isWebSocketStart) {
-              AppSocketioService.socket.emit(
-                "chat.status",
-                {
-                  "data": {
-                    "message_id": conversationList.first.messageId,
-                    "room_id": conversationList.first.roomId,
-                    "session_id": conversationList.first.sessionId,
-                    "status": 2,
-                    "times": (DateTime.now().millisecondsSinceEpoch / 1000).floor(),
-                    "timestamp": getDateTimeFormatted(),
+          InterModule.accessToken = output.data!.token!;
+          await ChatLocalSource().setAccessToken(output.data!.token!);
+
+          if (!isWebSocketStart) {
+            await startWebSocketIO();
+            await handleWebSocketIO();
+            isWebSocketStart = true;
+          }
+
+          conversationData = null;
+          conversationList = [];
+          currentPage = 1;
+
+          _getConversation(
+            roomId: jwtValue["payload"]["data"]["room_id"],
+            onSuccess: () async {
+              // AppLoggerCS.debugLog("conversationList.last: ${jsonEncode(conversationList.last)}");
+              if (isWebSocketStart) {
+                DateTime currentDateTime = DateTime.now();
+                AppSocketioService.socket.emit(
+                  "chat.status",
+                  {
+                    "data": {
+                      "message_id": conversationList.first.messageId,
+                      "room_id": conversationList.first.roomId,
+                      "session_id": conversationList.first.sessionId,
+                      "status": 2,
+                      "times": (currentDateTime.millisecondsSinceEpoch / 1000).floor(),
+                      "timestamp": getDateTimeFormatted(value: currentDateTime),
+                    },
                   },
-                },
-              );
-              isWebSocketStart = true;
-            }
-            onSuccess?.call();
-          },
-          onFailed: (errorMessage) {
-            onFailed?.call(errorMessage);
+                );
+                isWebSocketStart = true;
+              }
+              onSuccess?.call();
+            },
+            onFailed: (errorMessage) {
+              onFailed?.call(errorMessage);
+            },
+          );
+          return;
+        }
+      } else {
+        // if (!isWebSocketStart) {
+        //   await startWebSocketIO();
+        //   await handleWebSocketIO();
+        //   isWebSocketStart = true;
+        // }
+
+        Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
+        String uuid = const Uuid().v4();
+        DateTime currentDateTime = DateTime.now();
+        // AppSocketioService.socket.emitWithAckAsync(
+        // AppSocketioService.socket.emitWithAck(
+        AppSocketioService.socket.emit(
+          "chat",
+          {
+            "message_id": uuid,
+            "reply_id": null,
+            "ttl": 5,
+            "text": text,
+            // "time": getDateTimeFormatted(),
+            "time": currentDateTime.toUtc().toIso8601String(),
+            "type": "text",
+            "room_id": jwtValue["payload"]["data"]["room_id"],
+            "session_id": jwtValue["payload"]["data"]["session_id"],
+            "channel_code": checkPlatform(),
+            "reply_token": "",
+            "from_type": 1,
+            "status": 0,
           },
         );
-        return;
       }
     } catch (e) {
       AppLoggerCS.debugLog("[sendChat] error: $e");
@@ -588,18 +699,29 @@ class AppController {
     return platform;
   }
 
-  String getDateTimeFormatted() {
-    String date1 = DateFormat("yyyy-MM-dd").format(DateTime.now());
+  String getDateTimeFormatted({
+    DateTime? value,
+    String? version,
+  }) {
+    String date1 = DateFormat("yyyy-MM-dd").format(value ?? DateTime.now());
     // AppLoggerCS.debugLog("date1: $date1");
-    String time1 = DateFormat("hh:mm:ss.").format(DateTime.now());
+    String time1 = DateFormat("hh:mm:ss.").format(value ?? DateTime.now());
     // AppLoggerCS.debugLog("time1: $time1");
-    String concatDateTime = "${date1}T${time1}992Z";
+    String concatDateTime = "";
+    if (version == "1") {
+      concatDateTime = "${date1}T${time1}992Z";
+    } else {
+      concatDateTime = ("${date1}T${time1}").replaceAll(".", "") + "+07.00";
+    }
     AppLoggerCS.debugLog("concatDateTime: $concatDateTime");
     return concatDateTime;
   }
 
   static GetConversationResponseModel? conversationData;
   static List<ConversationList> conversationList = [];
+
+  static GetConversationResponseModel? conversationDataFirstChat;
+  static List<ConversationList> conversationListFirstChat = [];
 
   List<ConversationList> removeDuplicatesById(List<ConversationList> originalList) {
     final seenIds = <String>{};
@@ -655,6 +777,8 @@ class AppController {
 
       conversationData = output;
       conversationList.addAll(output.data!.conversations!);
+      conversationList.addAll(conversationListFirstChat);
+      conversationList.sort((a, b) => a.messageTime!.compareTo(b.messageTime!));
       conversationList = removeDuplicatesById(conversationList);
       // conversationList = conversationList.reversed.toList();
 
