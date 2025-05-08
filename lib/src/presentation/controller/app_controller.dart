@@ -711,7 +711,7 @@ class AppController {
     if (version == "1") {
       concatDateTime = "${date1}T${time1}992Z";
     } else {
-      concatDateTime = ("${date1}T${time1}").replaceAll(".", "") + "+07.00";
+      concatDateTime = "${("${date1}T$time1").replaceAll(".", "")}+07.00";
     }
     AppLoggerCS.debugLog("concatDateTime: $concatDateTime");
     return concatDateTime;

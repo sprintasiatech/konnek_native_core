@@ -32,28 +32,28 @@ class _ChatScreenState extends State<ChatScreen> {
 
   late List<ChatItem> _chatItems;
 
-  bool showToggleDownButton = false;
+  final ValueNotifier<bool> _showToggleButton = ValueNotifier(false);
 
   void scrollListenerFunc() {
-    print("Scroll position: ${_scrollController.position.pixels}");
+    AppLoggerCS.debugLog("Scroll position: ${_scrollController.position.pixels}");
     if (_scrollController.position.pixels > 100.0) {
-      showToggleDownButton = true;
+      _showToggleButton.value = true;
     } else {
-      showToggleDownButton = false;
+      _showToggleButton.value = false;
     }
-    setState(() {});
-    AppLoggerCS.debugLog("showToggleDownButton: $showToggleDownButton");
+    AppLoggerCS.debugLog("_showToggleButton.value: ${_showToggleButton.value}");
   }
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(scrollListenerFunc);
     _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
 
     // AppController.isRoomClosed = true;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _scrollToBottom();
+      // _scrollToBottom();
 
       if (AppController.isWebSocketStart == false) {
         AppController.onSocketChatCalled = () async {
@@ -113,9 +113,15 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _scrollToBottom() {
+  void _scrollToTop() {
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.minScrollExtent);
     }
   }
 
@@ -132,6 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
+    _showToggleButton.dispose();
+    _scrollController.dispose();
     disconnectSocket();
   }
 
@@ -209,9 +217,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       actions: [
                         InkWell(
-                          onTap: () async {
+                          onTap: () {
                             AppController.clear();
-                            await ChatLocalSource.localServiceHive.user.clear();
+                            ChatLocalSource.localServiceHive.user.clear();
                             Navigator.pop(context);
                           },
                           child: Container(
@@ -224,72 +232,32 @@ class _ChatScreenState extends State<ChatScreen> {
                         )
                       ],
                     ),
-                    body: SmartRefresher(
-                      reverse: true,
-                      controller: refreshController,
-                      scrollController: _scrollController,
-                      enablePullUp: true,
-                      enablePullDown: false,
-                      onLoading: () async {
-                        await AppController().loadMoreConversation(
-                          onSuccess: () {
-                            // refreshController.loadComplete();
-                            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-                            setState(() {});
+                    body: Stack(
+                      children: [
+                        SmartRefresher(
+                          reverse: true,
+                          controller: refreshController,
+                          scrollController: _scrollController,
+                          enablePullUp: true,
+                          enablePullDown: false,
+                          onLoading: () async {
+                            await AppController().loadMoreConversation(
+                              onSuccess: () {
+                                // refreshController.loadComplete();
+                                _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+                                setState(() {});
+                              },
+                              onFailed: (errorMessage) {
+                                // refreshController.loadComplete();
+                                setState(() {});
+                              },
+                            ).then((value) {
+                              refreshController.loadComplete();
+                            });
                           },
-                          onFailed: (errorMessage) {
-                            // refreshController.loadComplete();
-                            setState(() {});
-                          },
-                        ).then((value) {
-                          refreshController.loadComplete();
-                        });
-                      },
-                      child: Stack(
-                        children: [
-                          if (showToggleDownButton)
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: InkWell(
-                                    onTap: () {
-                                      AppLoggerCS.debugLog("up");
-                                    },
-                                    child: Container(
-                                      // color: Colors.blue,
-                                      margin: EdgeInsets.all(20),
-                                      height: 40,
-                                      width: 40,
-                                      child: CircleAvatar(
-                                        backgroundColor: const Color(0xff2a55a4),
-                                        child: Icon(
-                                          Icons.keyboard_arrow_down_outlined,
-                                          size: 30,
-                                          color: Colors.white,
-                                          // color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // child: Center(
-                                  //   child: SizedBox(
-                                  //     height: 50,
-                                  //     width: 50,
-                                  //     child: CircularProgressIndicator(),
-                                  //   ),
-                                  // ),
-                                ),
-                                SizedBox(
-                                  // color: Colors.purple,
-                                  // height: 100,
-                                  height: kToolbarHeight + 30 + ((uploadFile != null) ? 90 : 0),
-                                ),
-                              ],
-                            ),
-                          SingleChildScrollView(
+                          child: SingleChildScrollView(
                             // controller: _scrollController,
+                            // physics: const NeverScrollableScrollPhysics(),
                             child: Container(
                               padding: EdgeInsets.all(12),
                               child: Column(
@@ -416,8 +384,52 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        ValueListenableBuilder(
+                          valueListenable: _showToggleButton,
+                          builder: (context, show, child) {
+                            if (_showToggleButton.value) {
+                              return Positioned(
+                                bottom: 20,
+                                right: 20,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        // AppLoggerCS.debugLog("up");
+                                        _scrollToBottom();
+                                      },
+                                      child: Container(
+                                        // color: Colors.blue,
+                                        // margin: EdgeInsets.all(20),
+                                        height: 50,
+                                        width: 50,
+                                        child: CircleAvatar(
+                                          backgroundColor: const Color(0xff2a55a4).withOpacity(0.6),
+                                          child: Icon(
+                                            Icons.keyboard_arrow_down_outlined,
+                                            size: 35,
+                                            color: Colors.white,
+                                            // color: Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      // color: Colors.purple,
+                                      // height: 100,
+                                      height: kToolbarHeight + 30 + ((uploadFile != null) ? 90 : 0),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          },
+                        ),
+                      ],
                     ),
                     resizeToAvoidBottomInset: true,
                     bottomSheet: Column(
