@@ -1,4 +1,5 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
+import 'package:flutter_module1/bridge_method_channel.dart';
 import 'package:flutter_module1/src/env.dart';
 
 class InterModule {
@@ -10,17 +11,21 @@ class InterModule {
   static FamCodingSupply famCodingSupply = FamCodingSupply();
   static AppApiServiceCS appApiService = AppApiServiceCS(EnvironmentConfig.baseUrl());
 
-  Future<void> initialize({
-    required String inputClientId,
-    required String inputClientSecret,
-    dynamic configuration,
-  }) async {
-    clientId = inputClientId;
-    clientSecret = inputClientSecret;
+  Future<void> initialize(
+      //   {
+      //   required String inputClientId,
+      //   required String inputClientSecret,
+      //   dynamic configuration,
+      // }
+      ) async {
+    // clientId = inputClientId;
+    // clientSecret = inputClientSecret;
+    BridgeMethodChannel.setupHandler();
 
     EnvironmentConfig.flavor = Flavor.staging;
     // await LiveChatSdk().initialize();
     AppLoggerCS.useLogger = true;
+    AppLoggerCS.useFoundation = true;
     //
     appApiService.useFoundation = true;
     appApiService.useLogger = true;
