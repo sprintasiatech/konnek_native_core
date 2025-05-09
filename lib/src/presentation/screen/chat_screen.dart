@@ -87,7 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
             setState(() {});
           }
           AppController.clearRoomClosed();
-          disconnectSocket();
+          // disconnectSocket();
         };
         AppController.onSocketCSATCalled = () {
           AppLoggerCS.debugLog("[onSocketCSATCalled]");

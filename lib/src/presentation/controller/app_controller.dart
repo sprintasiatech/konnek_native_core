@@ -200,7 +200,7 @@ class AppController {
       AppSocketioService.socket.on("room.closed", (output) async {
         AppLoggerCS.debugLog("[socket][room.closed] output: ${jsonEncode(output)}");
         SocketRoomClosedResponseModel socket = SocketRoomClosedResponseModel.fromJson(output);
-        isWebSocketStart = false;
+        // isWebSocketStart = false;
         onSocketRoomClosedCalled.call();
       });
 
