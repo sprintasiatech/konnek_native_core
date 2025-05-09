@@ -21,6 +21,7 @@ import 'package:flutter_module1/src/support/app_socketio_service.dart';
 import 'package:flutter_module1/src/support/jwt_converter.dart';
 import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class AppController {
@@ -78,6 +79,27 @@ class AppController {
     );
   }
 
+  static void disconnectSocket() async {
+    try {
+      AppController.socketReady = false;
+      await ChatLocalSource().setSocketReady(false);
+      AppSocketioService.socket.disconnect();
+      AppSocketioService.socket.onDisconnect((_) {
+        AppLoggerCS.debugLog("disconnected");
+        AppLoggerCS.debugLog("disconnected id: ${AppSocketioService.socket.id}");
+      });
+    } catch (e) {
+      AppController.socketReady = false;
+      await ChatLocalSource().setSocketReady(false);
+    }
+  }
+
+  static Future<void> launchUrlChat(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      AppLoggerCS.debugLog('Could not launch $url');
+    }
+  }
+
   static void Function() onSocketChatCalled = () {};
   static void Function() onSocketChatStatusCalled = () {};
   static void Function() onSocketCSATCalled = () {};
@@ -85,6 +107,7 @@ class AppController {
   static void Function() onSocketRoomHandoverCalled = () {};
   static void Function() onSocketRoomClosedCalled = () {};
   static void Function() onSocketCustomerIsBlockedCalled = () {};
+  static void Function() onSocketDisconnectCalled = () {};
 
   static bool isCustomerBlocked = false;
   static bool isCSATOpen = false;
@@ -103,64 +126,66 @@ class AppController {
         AppLoggerCS.debugLog("[socket][chat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
 
-        sessionId = socket.session!.id!;
-        roomId = socket.session!.roomId!;
+        if (!isRoomClosed) {
+          sessionId = socket.session!.id!;
+          roomId = socket.session!.roomId!;
 
-        ConversationList? chatModel;
-        chatModel = null;
+          ConversationList? chatModel;
+          chatModel = null;
 
-        chatModel = ConversationList(
-          session: SessionGetConversation(
-            botStatus: socket.session?.botStatus,
-            agent: UserGetConversation(
-              id: socket.agent?.userId,
-              name: socket.agent?.name,
-              username: socket.agent?.username,
+          chatModel = ConversationList(
+            session: SessionGetConversation(
+              botStatus: socket.session?.botStatus,
+              agent: UserGetConversation(
+                id: socket.agent?.userId,
+                name: socket.agent?.name,
+                username: socket.agent?.username,
+              ),
             ),
-          ),
-          fromType: socket.message?.fromType,
-          text: socket.message?.text,
-          messageId: socket.messageId,
-          user: UserGetConversation(
-            id: socket.customer?.userId,
-            username: socket.customer?.username,
-            name: socket.customer?.name,
-          ),
-          messageTime: socket.message?.time,
-          sessionId: socket.session?.id,
-          roomId: socket.session?.roomId,
-          replyId: socket.replyId,
-          payload: socket.message?.payload,
-          type: socket.message?.type,
-        );
-        conversationList.add(chatModel);
-        onSocketChatCalled.call();
+            fromType: socket.message?.fromType,
+            text: socket.message?.text,
+            messageId: socket.messageId,
+            user: UserGetConversation(
+              id: socket.customer?.userId,
+              username: socket.customer?.username,
+              name: socket.customer?.name,
+            ),
+            messageTime: socket.message?.time,
+            sessionId: socket.session?.id,
+            roomId: socket.session?.roomId,
+            replyId: socket.replyId,
+            payload: socket.message?.payload,
+            type: socket.message?.type,
+          );
+          conversationList.add(chatModel);
+          // onSocketChatCalled.call();
 
-        DateTime currentDateTime = DateTime.now();
-        AppSocketioService.socket.emit(
-          "chat.status",
-          {
-            "data": {
-              "message_id": conversationList.last.messageId,
-              "room_id": conversationList.last.roomId,
-              "session_id": conversationList.last.sessionId,
-              "status": 2,
-              "times": (currentDateTime.millisecondsSinceEpoch / 1000).floor(),
-              "timestamp": getDateTimeFormatted(value: currentDateTime),
+          DateTime currentDateTime = DateTime.now();
+          AppSocketioService.socket.emit(
+            "chat.status",
+            {
+              "data": {
+                "message_id": conversationList.last.messageId,
+                "room_id": conversationList.last.roomId,
+                "session_id": conversationList.last.sessionId,
+                "status": 2,
+                "times": (currentDateTime.millisecondsSinceEpoch / 1000).floor(),
+                "timestamp": getDateTimeFormatted(value: currentDateTime),
+              },
             },
-          },
-        );
+          );
 
-        _getConversation(
-          roomId: socket.session!.roomId!,
-          onSuccess: () {
-            onSocketChatCalled.call();
-          },
-          onFailed: (errorMessage) {
-            onFailed?.call(errorMessage);
-          },
-        );
-        // onSocketChatCalled.call();
+          _getConversation(
+            roomId: socket.session!.roomId!,
+            onSuccess: () {
+              onSocketChatCalled.call();
+            },
+            onFailed: (errorMessage) {
+              onFailed?.call(errorMessage);
+            },
+          );
+          // onSocketChatCalled.call();
+        }
       });
 
       AppSocketioService.socket.on("chat.status", (output) async {
@@ -169,14 +194,6 @@ class AppController {
         sessionId = socket.data!.sessionId!;
         roomId = socket.data!.roomId!;
 
-        // conversationList = conversationList.map((element) {
-        //   if (element.messageId == socket.data?.messageId) {
-        //     element.status = socket.data?.status;
-        //     return element;
-        //   } else {
-        //     return element;
-        //   }
-        // }).toList();
         conversationList.map((element) {
           if (element.messageId == socket.data?.messageId) {
             element.status = socket.data?.status;
@@ -201,6 +218,12 @@ class AppController {
         AppLoggerCS.debugLog("[socket][room.closed] output: ${jsonEncode(output)}");
         SocketRoomClosedResponseModel socket = SocketRoomClosedResponseModel.fromJson(output);
         // isWebSocketStart = false;
+        if (socket.data?.csat != null) {
+          isRoomClosed = false;
+        } else {
+          isRoomClosed = true;
+          InterModule.accessToken = "";
+        }
         onSocketRoomClosedCalled.call();
       });
 
@@ -258,6 +281,12 @@ class AppController {
           InterModule.accessToken = "";
         }
         onSocketCustomerIsBlockedCalled.call();
+      });
+      AppSocketioService.socket.on("disconnect", (output) async {
+        AppLoggerCS.debugLog("[socket][disconnect] output: ${jsonEncode(output)}");
+        isWebSocketStart = false;
+        InterModule.accessToken = "";
+        onSocketDisconnectCalled.call();
       });
     } catch (e) {
       AppLoggerCS.debugLog('[handleWebSocketIO] e: $e');

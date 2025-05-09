@@ -9,10 +9,7 @@ import 'package:flutter_module1/src/presentation/controller/app_controller.dart'
 import 'package:flutter_module1/src/presentation/controller/chat_controller.dart';
 import 'package:flutter_module1/src/presentation/widget/chat_bubble_widget.dart';
 import 'package:flutter_module1/src/presentation/widget/show_image_widget.dart';
-import 'package:flutter_module1/src/support/app_socketio_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:socket_io_client/socket_io_client.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -82,7 +79,6 @@ class _ChatScreenState extends State<ChatScreen> {
         AppController.onSocketRoomClosedCalled = () {
           AppLoggerCS.debugLog("[onSocketRoomClosedCalled]");
           // _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          AppController.isRoomClosed = true;
           if (mounted) {
             setState(() {});
           }
@@ -107,10 +103,17 @@ class _ChatScreenState extends State<ChatScreen> {
             setState(() {});
           }
           AppController.clearRoomClosed();
-          disconnectSocket();
+          AppController.disconnectSocket();
         };
         AppController.onSocketCustomerIsBlockedCalled = () {
           AppLoggerCS.debugLog("[onSocketCustomerIsBlockedCalled]");
+          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+          if (mounted) {
+            setState(() {});
+          }
+        };
+        AppController.onSocketDisconnectCalled = () {
+          AppLoggerCS.debugLog("[onSocketDisconnectCalled]");
           _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
           if (mounted) {
             setState(() {});
@@ -147,28 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
     _showToggleButton.dispose();
     _scrollController.dispose();
-    disconnectSocket();
-  }
-
-  void disconnectSocket() async {
-    try {
-      AppController.socketReady = false;
-      await ChatLocalSource().setSocketReady(false);
-      AppSocketioService.socket.disconnect();
-      AppSocketioService.socket.onDisconnect((_) {
-        AppLoggerCS.debugLog("disconnected");
-        AppLoggerCS.debugLog("disconnected id: ${AppSocketioService.socket.id}");
-      });
-    } catch (e) {
-      AppController.socketReady = false;
-      await ChatLocalSource().setSocketReady(false);
-    }
-  }
-
-  Future<void> _launchUrl(String url) async {
-    if (!await launchUrl(Uri.parse(url))) {
-      AppLoggerCS.debugLog('Could not launch $url');
-    }
+    AppController.disconnectSocket();
   }
 
   @override
@@ -356,7 +338,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                         srcImage = src;
                                                       });
                                                     } else {
-                                                      await _launchUrl(src);
+                                                      await AppController.launchUrlChat(src);
                                                     }
                                                   }
                                                 },
