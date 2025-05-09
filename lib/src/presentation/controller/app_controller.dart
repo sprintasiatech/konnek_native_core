@@ -84,7 +84,9 @@ class AppController {
   static void Function() onSocketCSATCloseCalled = () {};
   static void Function() onSocketRoomHandoverCalled = () {};
   static void Function() onSocketRoomClosedCalled = () {};
+  static void Function() onSocketCustomerIsBlockedCalled = () {};
 
+  static bool isCustomerBlocked = false;
   static bool isCSATOpen = false;
   static bool isRoomClosed = false;
 
@@ -245,6 +247,17 @@ class AppController {
         AppLoggerCS.debugLog("[socket][csat.close] output: ${jsonEncode(output)}");
         isWebSocketStart = false;
         onSocketCSATCloseCalled.call();
+      });
+
+      AppSocketioService.socket.on("customer.is_blocked", (output) async {
+        AppLoggerCS.debugLog("[socket][customer.is_blocked] output: ${jsonEncode(output)}");
+        Map<String, dynamic> result = jsonDecode(output);
+        AppLoggerCS.debugLog("[socket][customer.is_blocked] is_blocked: ${result['is_blocked']}");
+        isCustomerBlocked = result['is_blocked'];
+        if (isCustomerBlocked) {
+          InterModule.accessToken = "";
+        }
+        onSocketCustomerIsBlockedCalled.call();
       });
     } catch (e) {
       AppLoggerCS.debugLog('[handleWebSocketIO] e: $e');
@@ -541,25 +554,26 @@ class AppController {
     void Function()? onSuccess,
     void Function(String errorMessage)? onFailed,
     void Function(MetaSendChat value)? onGreetingsFailed,
+    void Function()? onCustomerBlockedFailed,
     void Function()? onChatSentFirst,
   }) async {
     isLoading = true;
     try {
+      String uuid = const Uuid().v4();
+      ConversationList? chatModel0;
+      chatModel0 = null;
+      chatModel0 = ConversationList(
+        fromType: "1",
+        text: text,
+        messageId: uuid,
+        messageTime: DateTime.now().toUtc(),
+        status: 0,
+      );
+      conversationList.add(chatModel0);
+      onChatSentFirst?.call();
+
       if (InterModule.accessToken == "") {
         Map<String, dynamic>? localDataFormatted = await ChatLocalSource().getClientData();
-
-        String uuid = const Uuid().v4();
-        ConversationList? chatModel0;
-        chatModel0 = null;
-        chatModel0 = ConversationList(
-          fromType: "1",
-          text: text,
-          messageId: uuid,
-          messageTime: DateTime.now().toUtc(),
-          status: 2,
-        );
-        conversationList.add(chatModel0);
-        onChatSentFirst?.call();
 
         SendChatRequestModel requestBody = SendChatRequestModel(
           name: localDataFormatted?["name"],
@@ -595,6 +609,13 @@ class AppController {
           conversationList.add(chatModel);
           conversationListFirstChat.addAll(conversationList);
           onGreetingsFailed?.call(output.meta!);
+          return;
+        }
+        if (output.meta?.code == 508) {
+          isCustomerBlocked = true;
+          conversationListFirstChat = removeDuplicatesById(conversationListFirstChat);
+          conversationListFirstChat.addAll(conversationList);
+          onCustomerBlockedFailed?.call();
           return;
         }
         if (output.meta?.code != 200) {
@@ -657,7 +678,7 @@ class AppController {
         // }
 
         Map jwtValue = JwtConverter().decodeJwt(InterModule.accessToken);
-        String uuid = const Uuid().v4();
+        // String uuid = const Uuid().v4();
         DateTime currentDateTime = DateTime.now();
         // AppSocketioService.socket.emitWithAckAsync(
         // AppSocketioService.socket.emitWithAck(
