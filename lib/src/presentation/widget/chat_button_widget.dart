@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
 import 'package:flutter_module1/src/presentation/screen/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,7 +24,11 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return const LoginScreen();
+              return LoginScreen(
+                callback: () {
+                  setState(() {});
+                },
+              );
             },
           ),
         );
@@ -32,32 +37,57 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppController.floatingButtonColor,
+              // color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
                 color: Colors.grey.shade300,
               ),
             ),
-            child: RichText(
-              text: TextSpan(
-                text: "App! ",
-                style: GoogleFonts.inter(
-                  color: Colors.green,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: "Talk To Us",
-                    style: GoogleFonts.inter(
-                      color: Colors.green,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
+            child: AppController.iconWidget != null
+                // child: AppController.iconWidget.value != null
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.memory(
+                        AppController.iconWidget!,
+                        // AppController.iconWidget.value!,
+                        // height: 50,
+                        width: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        AppController.floatingText,
+                        // "talk to us",
+                        style: GoogleFonts.inter(
+                          color: Colors.green,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    ],
                   )
-                ],
-              ),
-            ),
+                : RichText(
+                    text: TextSpan(
+                      text: "App! ",
+                      style: GoogleFonts.inter(
+                        color: Colors.green,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: "Talk To Us",
+                          style: GoogleFonts.inter(
+                            color: Colors.green,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
             // child: Text(
             //   "App! Talk To Us",
             //   style: GoogleFonts.inter(

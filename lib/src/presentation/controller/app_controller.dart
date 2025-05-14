@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_module1/inter_module.dart';
 import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
 import 'package:flutter_module1/src/data/models/response/bot_payload_data_model.dart';
@@ -497,6 +498,7 @@ class AppController {
     void Function(String errorMessage)? onFailed,
   }) async {
     try {
+      AppLoggerCS.debugLog("[getConfig] called");
       // bool? valueSocketReady = await ChatLocalSource().getSocketReady();
       // if (valueSocketReady != null) {
       //   AppController.socketReady = valueSocketReady;
@@ -526,10 +528,18 @@ class AppController {
 
       if (getConfigResponseModel.meta?.code == 200) {
         DataGetConfig tempDataConfig = getConfigResponseModel.data!;
-        Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(getConfigResponseModel.data!.avatarImage!);
-        tempDataConfig.avatarImageBit = dataAvatar;
+        if (getConfigResponseModel.data!.avatarImage != null) {
+          Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(getConfigResponseModel.data!.avatarImage!);
+          tempDataConfig.avatarImageBit = dataAvatar;
+        }
+        if (getConfigResponseModel.data!.iosIcon != null) {
+          Uint8List dataIcon = await AppBase64ConverterHelper().decodeBase64Cleaning(getConfigResponseModel.data!.iosIcon!);
+          tempDataConfig.widgetIconBit = dataIcon;
+        }
         dataGetConfigValue = tempDataConfig;
         await ChatLocalSource().setConfigData(getConfigResponseModel.data!);
+
+        await configValue();
         onSuccess?.call();
         return;
       }
@@ -555,6 +565,9 @@ class AppController {
       DataGetConfig tempDataConfig = data;
       Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(data.avatarImage!);
       tempDataConfig.avatarImageBit = dataAvatar;
+      Uint8List dataIcon = await AppBase64ConverterHelper().decodeBase64Cleaning(data.iosIcon!);
+      tempDataConfig.widgetIconBit = dataIcon;
+      await configValue();
       dataGetConfigValue = tempDataConfig;
 
       onSuccess?.call(tempDataConfig);
@@ -563,6 +576,62 @@ class AppController {
       onFailed?.call(e.toString());
       return;
     }
+  }
+
+  static Future<DataGetConfig?> getConfigFromLocal2() async {
+    try {
+      DataGetConfig? data = await ChatLocalSource().getConfigData();
+      if (data == null) {
+        return null;
+      }
+      DataGetConfig tempDataConfig = data;
+      Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(data.avatarImage!);
+      tempDataConfig.avatarImageBit = dataAvatar;
+      Uint8List dataIcon = await AppBase64ConverterHelper().decodeBase64Cleaning(data.iosIcon!);
+      tempDataConfig.widgetIconBit = dataIcon;
+      await configValue();
+      dataGetConfigValue = tempDataConfig;
+
+      return dataGetConfigValue;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static Color headerTextColor = Colors.green;
+  static Color headerBackgroundColor = Colors.teal;
+  static Color floatingButtonColor = Colors.white;
+  static Color floatingTextColor = Colors.black;
+  static String floatingText = "";
+  static Uint8List? iconWidget;
+  // static ValueNotifier<Uint8List?> iconWidget = ValueNotifier(null);
+
+  // static Function() onConfigValueCalled = () {};
+
+  static Future<void> configValue() async {
+    AppLoggerCS.debugLog("call configValue");
+    if (dataGetConfigValue != null) {
+      headerTextColor = hexToColor(dataGetConfigValue!.headerTextColor!);
+      headerBackgroundColor = hexToColor(dataGetConfigValue!.headerBackgroundColor!);
+      floatingButtonColor = hexToColor(dataGetConfigValue!.buttonColor!);
+      floatingTextColor = hexToColor(dataGetConfigValue!.textButtonColor!);
+      floatingText = "${dataGetConfigValue!.textButton}";
+      iconWidget = dataGetConfigValue!.widgetIconBit;
+      // iconWidget.value = dataGetConfigValue!.widgetIconBit;
+      // AppLoggerCS.debugLog("iyconWidget.value: ${iconWidget.value}");
+      // onConfigValueCalled.call();
+      AppLoggerCS.debugLog("call configValue done");
+    }
+  }
+
+  static Color hexToColor(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) {
+      buffer.write('ff');
+      buffer.write(hexString.replaceFirst('#', ''));
+      return Color(int.parse(buffer.toString(), radix: 16));
+    }
+    return Colors.black;
   }
 
   static String nameUser = "";

@@ -182,17 +182,21 @@ class _ChatScreenState extends State<ChatScreen> {
                   Scaffold(
                     backgroundColor: Colors.white,
                     appBar: AppBar(
-                      forceMaterialTransparency: true,
+                      backgroundColor: AppController.headerBackgroundColor,
+                      // forceMaterialTransparency: true,
                       leadingWidth: 70,
                       leading: Center(
                         child: (AppController.dataGetConfigValue != null)
-                            ? Image.memory(
-                                AppController.dataGetConfigValue!.avatarImageBit!,
-                                // Uri.parse(AppController.dataGetConfigValue!.avatarImage!).data!.contentAsBytes(),
-                                // base64Decode(dataGetConfig!.avatarImage!),
-                                height: 50,
-                                width: 50,
-                                fit: BoxFit.cover,
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(40),
+                                child: Image.memory(
+                                  AppController.dataGetConfigValue!.avatarImageBit!,
+                                  // Uri.parse(AppController.dataGetConfigValue!.avatarImage!).data!.contentAsBytes(),
+                                  // base64Decode(dataGetConfig!.avatarImage!),
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.cover,
+                                ),
                               )
                             : Text(
                                 "App!",
@@ -207,7 +211,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       title: Text(
                         (AppController.dataGetConfigValue != null) ? "${AppController.dataGetConfigValue?.avatarName}" : "Cust Service",
                         style: GoogleFonts.inter(
-                          color: Colors.green,
+                          color: AppController.headerTextColor,
+                          // color: Colors.green,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
@@ -224,6 +229,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             child: Icon(
                               Icons.keyboard_arrow_down,
                               size: 28,
+                              color: Colors.white,
                             ),
                           ),
                         )

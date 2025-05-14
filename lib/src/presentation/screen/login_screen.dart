@@ -7,7 +7,12 @@ import 'package:flutter_module1/src/presentation/screen/chat_screen.dart';
 import 'package:flutter_module1/src/support/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final void Function()? callback;
+
+  const LoginScreen({
+    super.key,
+    this.callback,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -26,15 +31,36 @@ class _LoginScreenState extends State<LoginScreen> {
     // nameController.text = "test1";
     // emailController.text = "test1@test.com";
 
+    // nameController.text = "testX";
+    // emailController.text = "testX@test.com";
+
+    // nameController.text = "testT";
+    // emailController.text = "testT@test.com";
+
+    // nameController.text = "testZ";
+    // emailController.text = "testZ@test.com";
+
+    // nameController.text = "testV";
+    // emailController.text = "testV@test.com";
+
+    // nameController.text = "testJ";
+    // emailController.text = "testJ@test.com";
+
+    // nameController.text = "testBlock";
+    // emailController.text = "testBlock@test.com";
+
+    // nameController.text = "rabilsdkmobile";
+    // emailController.text = "rabisdk@mail.com";
     Future.delayed(
       Duration(milliseconds: 250),
       () {
-        // WidgetsBinding.instance.ensureVisualUpdate();
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           await AppController().getConfig(
-            onSuccess: () async {
-              // AppLoggerCS.debugLog("[getConfig] success");
-              setState(() {});
+            onSuccess: () {
+              AppLoggerCS.debugLog("[getConfig] success");
+              setState(() {
+                widget.callback?.call();
+              });
             },
             onFailed: (errorMessage) {
               // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");

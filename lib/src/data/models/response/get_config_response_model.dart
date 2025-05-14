@@ -21,7 +21,6 @@ class GetConfigResponseModel {
 }
 
 class DataGetConfig {
-  Uint8List? avatarImageBit;
   String? avatarImage;
   String? avatarName;
   String? background;
@@ -31,11 +30,13 @@ class DataGetConfig {
   String? greetingMessage;
   String? headerBackgroundColor;
   String? headerTextColor;
+  String? iosIcon;
   String? preview;
   bool? status;
   String? textButton;
   String? textButtonColor;
-  String? widgetIcon;
+  Uint8List? avatarImageBit;
+  Uint8List? widgetIconBit;
 
   DataGetConfig({
     this.avatarImage,
@@ -47,11 +48,11 @@ class DataGetConfig {
     this.greetingMessage,
     this.headerBackgroundColor,
     this.headerTextColor,
+    this.iosIcon,
     this.preview,
     this.status,
     this.textButton,
     this.textButtonColor,
-    this.widgetIcon,
   });
 
   factory DataGetConfig.fromJson(Map<String, dynamic> json) => DataGetConfig(
@@ -64,11 +65,11 @@ class DataGetConfig {
         greetingMessage: json["greeting_message"],
         headerBackgroundColor: json["header_background_color"],
         headerTextColor: json["header_text_color"],
+        iosIcon: json["ios_icon"],
         preview: json["preview"],
         status: json["status"],
         textButton: json["text_button"],
         textButtonColor: json["text_button_color"],
-        widgetIcon: json["widget_icon"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,11 +82,11 @@ class DataGetConfig {
         "greeting_message": greetingMessage,
         "header_background_color": headerBackgroundColor,
         "header_text_color": headerTextColor,
+        "ios_icon": iosIcon,
         "preview": preview,
         "status": status,
         "text_button": textButton,
         "text_button_color": textButtonColor,
-        "widget_icon": widgetIcon,
       };
 }
 
