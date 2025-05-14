@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module1/assets/assets.dart';
+import 'package:flutter_module1/inter_module.dart';
 import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
 import 'package:flutter_module1/src/data/source/local/chat_local_source.dart';
 import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
@@ -68,6 +69,12 @@ class _ChatScreenState extends State<ChatScreen> {
           if (mounted) {
             setState(() {});
           }
+          if (AppController.isRoomClosed == RoomCloseState.closeWaiting) {
+            AppController.isWebSocketStart = false;
+            AppController.isRoomClosed = RoomCloseState.close;
+            AppController.clearRoomClosed();
+            AppController.disconnectSocket();
+          }
         };
         AppController.onSocketRoomHandoverCalled = () {
           AppLoggerCS.debugLog("[onSocketRoomHandoverCalled]");
@@ -82,14 +89,13 @@ class _ChatScreenState extends State<ChatScreen> {
           if (mounted) {
             setState(() {});
           }
-          // AppController.clearRoomClosed();
-          // disconnectSocket();
         };
         AppController.onSocketCSATCalled = () {
           AppLoggerCS.debugLog("[onSocketCSATCalled]");
           _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
           AppController.isCSATOpen = true;
-          AppController.isRoomClosed = false;
+          AppController.isRoomClosed = RoomCloseState.open;
+          // AppController.isRoomClosed = false;
           if (mounted) {
             setState(() {});
           }
@@ -98,7 +104,8 @@ class _ChatScreenState extends State<ChatScreen> {
           AppLoggerCS.debugLog("[onSocketCSATCloseCalled]");
           _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
           AppController.isCSATOpen = false;
-          AppController.isRoomClosed = true;
+          AppController.isRoomClosed = RoomCloseState.close;
+          // AppController.isRoomClosed = true;
           if (mounted) {
             setState(() {});
           }
@@ -180,7 +187,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       leading: Center(
                         child: (AppController.dataGetConfigValue != null)
                             ? Image.memory(
-                                Uri.parse(AppController.dataGetConfigValue!.avatarImage!).data!.contentAsBytes(),
+                                AppController.dataGetConfigValue!.avatarImageBit!,
+                                // Uri.parse(AppController.dataGetConfigValue!.avatarImage!).data!.contentAsBytes(),
                                 // base64Decode(dataGetConfig!.avatarImage!),
                                 height: 50,
                                 width: 50,
@@ -530,11 +538,18 @@ class _ChatScreenState extends State<ChatScreen> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              AppController.isRoomClosed
+                              // AppController.isRoomClosed
+                              AppController.isRoomClosed == RoomCloseState.close
                                   ? InkWell(
                                       onTap: () {
                                         setState(() {
-                                          AppController.isRoomClosed = !AppController.isRoomClosed;
+                                          // AppController.isRoomClosed = !AppController.isRoomClosed;
+                                          if (AppController.isRoomClosed == RoomCloseState.close) {
+                                            InterModule.accessToken = "";
+                                            AppController.isRoomClosed = RoomCloseState.open;
+                                          } else {
+                                            AppController.isRoomClosed = RoomCloseState.close;
+                                          }
                                         });
                                       },
                                       child: Container(

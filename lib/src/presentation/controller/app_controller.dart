@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter_module1/inter_module.dart';
@@ -23,6 +24,12 @@ import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
+
+enum RoomCloseState {
+  close,
+  closeWaiting,
+  open,
+}
 
 class AppController {
   static bool isLoading = false;
@@ -111,7 +118,8 @@ class AppController {
 
   static bool isCustomerBlocked = false;
   static bool isCSATOpen = false;
-  static bool isRoomClosed = false;
+  // static bool isRoomClosed = false;
+  static RoomCloseState isRoomClosed = RoomCloseState.open;
 
   Future<void> handleWebSocketIO({
     // void Function()? onSuccess,
@@ -126,66 +134,64 @@ class AppController {
         AppLoggerCS.debugLog("[socket][chat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
 
-        if (!isRoomClosed) {
-          sessionId = socket.session!.id!;
-          roomId = socket.session!.roomId!;
+        sessionId = socket.session!.id!;
+        roomId = socket.session!.roomId!;
 
-          ConversationList? chatModel;
-          chatModel = null;
+        ConversationList? chatModel;
+        chatModel = null;
 
-          chatModel = ConversationList(
-            session: SessionGetConversation(
-              botStatus: socket.session?.botStatus,
-              agent: UserGetConversation(
-                id: socket.agent?.userId,
-                name: socket.agent?.name,
-                username: socket.agent?.username,
-              ),
+        chatModel = ConversationList(
+          session: SessionGetConversation(
+            botStatus: socket.session?.botStatus,
+            agent: UserGetConversation(
+              id: socket.agent?.userId,
+              name: socket.agent?.name,
+              username: socket.agent?.username,
             ),
-            fromType: socket.message?.fromType,
-            text: socket.message?.text,
-            messageId: socket.messageId,
-            user: UserGetConversation(
-              id: socket.customer?.userId,
-              username: socket.customer?.username,
-              name: socket.customer?.name,
-            ),
-            messageTime: socket.message?.time,
-            sessionId: socket.session?.id,
-            roomId: socket.session?.roomId,
-            replyId: socket.replyId,
-            payload: socket.message?.payload,
-            type: socket.message?.type,
-          );
-          conversationList.add(chatModel);
-          // onSocketChatCalled.call();
+          ),
+          fromType: socket.message?.fromType,
+          text: socket.message?.text,
+          messageId: socket.messageId,
+          user: UserGetConversation(
+            id: socket.customer?.userId,
+            username: socket.customer?.username,
+            name: socket.customer?.name,
+          ),
+          messageTime: socket.message?.time,
+          sessionId: socket.session?.id,
+          roomId: socket.session?.roomId,
+          replyId: socket.replyId,
+          payload: socket.message?.payload,
+          type: socket.message?.type,
+        );
+        conversationList.add(chatModel);
+        // onSocketChatCalled.call();
 
-          DateTime currentDateTime = DateTime.now();
-          AppSocketioService.socket.emit(
-            "chat.status",
-            {
-              "data": {
-                "message_id": conversationList.last.messageId,
-                "room_id": conversationList.last.roomId,
-                "session_id": conversationList.last.sessionId,
-                "status": 2,
-                "times": (currentDateTime.millisecondsSinceEpoch / 1000).floor(),
-                "timestamp": getDateTimeFormatted(value: currentDateTime),
-              },
+        DateTime currentDateTime = DateTime.now();
+        AppSocketioService.socket.emit(
+          "chat.status",
+          {
+            "data": {
+              "message_id": conversationList.last.messageId,
+              "room_id": conversationList.last.roomId,
+              "session_id": conversationList.last.sessionId,
+              "status": 2,
+              "times": (currentDateTime.millisecondsSinceEpoch / 1000).floor(),
+              "timestamp": getDateTimeFormatted(value: currentDateTime),
             },
-          );
+          },
+        );
 
-          _getConversation(
-            roomId: socket.session!.roomId!,
-            onSuccess: () {
-              onSocketChatCalled.call();
-            },
-            onFailed: (errorMessage) {
-              onFailed?.call(errorMessage);
-            },
-          );
-          // onSocketChatCalled.call();
-        }
+        _getConversation(
+          roomId: socket.session!.roomId!,
+          onSuccess: () {
+            onSocketChatCalled.call();
+          },
+          onFailed: (errorMessage) {
+            onFailed?.call(errorMessage);
+          },
+        );
+        // onSocketChatCalled.call();
       });
 
       AppSocketioService.socket.on("chat.status", (output) async {
@@ -219,10 +225,10 @@ class AppController {
         SocketRoomClosedResponseModel socket = SocketRoomClosedResponseModel.fromJson(output);
         // isWebSocketStart = false;
         if (socket.data?.csat != null) {
-          isRoomClosed = false;
+          // isRoomClosed = false;
+          isRoomClosed = RoomCloseState.open;
         } else {
-          isRoomClosed = true;
-          InterModule.accessToken = "";
+          isRoomClosed = RoomCloseState.closeWaiting;
         }
         onSocketRoomClosedCalled.call();
       });
@@ -519,12 +525,16 @@ class AppController {
       }
 
       if (getConfigResponseModel.meta?.code == 200) {
-        dataGetConfigValue = getConfigResponseModel.data;
+        DataGetConfig tempDataConfig = getConfigResponseModel.data!;
+        Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(getConfigResponseModel.data!.avatarImage!);
+        tempDataConfig.avatarImageBit = dataAvatar;
+        dataGetConfigValue = tempDataConfig;
         await ChatLocalSource().setConfigData(getConfigResponseModel.data!);
         onSuccess?.call();
         return;
       }
     } catch (e) {
+      AppLoggerCS.debugLog("[getConfig] e: $e");
       onFailed?.call(e.toString());
       return;
     }
@@ -542,9 +552,12 @@ class AppController {
         onFailed?.call("empty data");
         return;
       }
-      dataGetConfigValue = data;
+      DataGetConfig tempDataConfig = data;
+      Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(data.avatarImage!);
+      tempDataConfig.avatarImageBit = dataAvatar;
+      dataGetConfigValue = tempDataConfig;
 
-      onSuccess?.call(data);
+      onSuccess?.call(tempDataConfig);
       return;
     } catch (e) {
       onFailed?.call(e.toString());

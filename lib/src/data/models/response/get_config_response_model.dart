@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class GetConfigResponseModel {
   MetaGetConfig? meta;
   DataGetConfig? data;
@@ -19,6 +21,7 @@ class GetConfigResponseModel {
 }
 
 class DataGetConfig {
+  Uint8List? avatarImageBit;
   String? avatarImage;
   String? avatarName;
   String? background;

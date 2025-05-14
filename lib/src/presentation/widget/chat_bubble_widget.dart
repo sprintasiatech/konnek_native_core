@@ -636,7 +636,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               SizedBox(height: 5),
               (widget.dataGetConfig != null)
                   ? Image.memory(
-                      Uri.parse(widget.dataGetConfig!.avatarImage!).data!.contentAsBytes(),
+                      AppController.dataGetConfigValue!.avatarImageBit!,
+                      // Uri.parse(widget.dataGetConfig!.avatarImage!).data!.contentAsBytes(),
                       // base64Decode(dataGetConfig!.avatarImage!),
                       height: 50,
                       width: 50,
