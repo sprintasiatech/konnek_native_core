@@ -47,4 +47,18 @@ class BridgeMethodChannel {
       }
     });
   }
+
+  static Future<String?> configData(Map<String, dynamic> data) async {
+    try {
+      AppLoggerCS.debugLog("[BridgeMethodChannel][configData] call from flutter ${jsonEncode(data)}");
+      final version = await _channel.invokeMethod<String>(
+        'configData',
+        data,
+      );
+      return version;
+    } catch (e) {
+      AppLoggerCS.debugLog("[BridgeMethodChannel][configData] error $e");
+      return null;
+    }
+  }
 }

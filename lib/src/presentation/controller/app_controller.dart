@@ -611,6 +611,7 @@ class AppController {
   static Future<void> configValue() async {
     AppLoggerCS.debugLog("call configValue");
     if (dataGetConfigValue != null) {
+      InterModule.setupConfig(dataGetConfigValue!);
       headerTextColor = hexToColor(dataGetConfigValue!.headerTextColor!);
       headerBackgroundColor = hexToColor(dataGetConfigValue!.headerBackgroundColor!);
       floatingButtonColor = hexToColor(dataGetConfigValue!.buttonColor!);
