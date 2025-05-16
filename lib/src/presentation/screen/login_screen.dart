@@ -1,6 +1,7 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module1/assets/assets.dart';
+import 'package:flutter_module1/inter_module.dart';
 import 'package:flutter_module1/src/data/source/local/chat_local_source.dart';
 import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
 import 'package:flutter_module1/src/presentation/screen/chat_screen.dart';
@@ -46,30 +47,66 @@ class _LoginScreenState extends State<LoginScreen> {
     // nameController.text = "testJ";
     // emailController.text = "testJ@test.com";
 
+    // nameController.text = "testN";
+    // emailController.text = "testN@test.com";
+
     // nameController.text = "testBlock";
     // emailController.text = "testBlock@test.com";
 
     // nameController.text = "rabilsdkmobile";
     // emailController.text = "rabisdk@mail.com";
-    Future.delayed(
-      Duration(milliseconds: 250),
-      () {
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          await AppController().getConfig(
-            onSuccess: () {
-              AppLoggerCS.debugLog("[getConfig] success");
-              setState(() {
-                widget.callback?.call();
-              });
-            },
-            onFailed: (errorMessage) {
-              // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
-              setState(() {});
-            },
-          );
-        });
-      },
-    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      InterModule.triggerUI = () {
+        setState(() {});
+      };
+      //   AppController.scaffoldMessengerCallback = (FetchingState state) {
+      //     Color colorState = Colors.white;
+      //     String statusState = "";
+      //     if (state == FetchingState.loading) {
+      //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //       colorState = Colors.blue;
+      //       statusState = "Fetching";
+      //     }
+      //     if (state == FetchingState.failed) {
+      //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //       colorState = Colors.red;
+      //       statusState = "Failed";
+      //     }
+      //     if (state == FetchingState.success) {
+      //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //       colorState = Colors.green;
+      //       statusState = "Success";
+      //     }
+      //     ScaffoldMessenger.of(
+      //       context,
+      //     ).showSnackBar(
+      //       SnackBar(
+      //         duration: const Duration(milliseconds: 800),
+      //         backgroundColor: colorState,
+      //         content: Text(
+      //           statusState,
+      //           style: GoogleFonts.inter(
+      //             fontSize: 14,
+      //             fontWeight: FontWeight.w500,
+      //           ),
+      //         ),
+      //       ),
+      //     );
+      //   };
+
+      //   AppController().getConfig(
+      //     onSuccess: () {
+      //       // AppLoggerCS.debugLog("[getConfig] success");
+      //       setState(() {});
+      //       widget.callback?.call();
+      //     },
+      //     onFailed: (errorMessage) {
+      //       // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
+      //       setState(() {});
+      //     },
+      //   );
+    });
   }
 
   String nameErrorText = "";

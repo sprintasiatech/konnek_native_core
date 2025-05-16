@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_module1/inter_module.dart';
 import 'package:flutter_module1/src/env.dart';
+import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
 
 class BridgeMethodChannel {
   static const MethodChannel _channel = MethodChannel('konnek_native');
@@ -44,6 +45,14 @@ class BridgeMethodChannel {
       if (call.method == 'clientConfigChannel') {
         final String data = call.arguments;
         clientConfigChannel(data);
+      }
+      if (call.method == 'fetchConfigData') {
+        AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] call fetchConfigData");
+        AppController().getConfig(
+          onSuccess: () {
+            InterModule.triggerUI.call();
+          },
+        );
       }
     });
   }

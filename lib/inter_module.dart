@@ -13,6 +13,7 @@ class InterModule {
   static AppApiServiceCS appApiService = AppApiServiceCS(EnvironmentConfig.baseUrl());
 
   static void Function(DataGetConfig data) setupConfig = (DataGetConfig data) {};
+  static void Function() triggerUI = () {};
 
   Future<void> initialize(
       //   {
