@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/send_chat_response_model.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/send_chat_response_model.dart';
 
 class LocalKey {
   static const String accessToken = "accessToken";

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/app.dart';
-import 'package:flutter_module1/bridge_method_channel.dart';
-import 'package:flutter_module1/inter_module.dart';
+import 'package:konnek_native_core/app.dart';
+import 'package:konnek_native_core/inter_module.dart';
 
 void main() async {
   runApp(const MyApp());

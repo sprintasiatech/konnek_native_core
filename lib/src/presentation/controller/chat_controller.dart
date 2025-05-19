@@ -1,4 +1,4 @@
-import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
 
 abstract class ChatItem {}
 

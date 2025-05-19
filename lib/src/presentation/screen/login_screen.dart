@@ -1,11 +1,11 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/assets/assets.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/data/source/local/chat_local_source.dart';
-import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
-import 'package:flutter_module1/src/presentation/screen/chat_screen.dart';
-import 'package:flutter_module1/src/support/string_extension.dart';
+import 'package:konnek_native_core/assets/assets.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
+import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
+import 'package:konnek_native_core/src/presentation/screen/chat_screen.dart';
+import 'package:konnek_native_core/src/support/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function()? callback;

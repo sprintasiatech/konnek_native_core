@@ -1,7 +1,7 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/bridge_method_channel.dart';
-import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
-import 'package:flutter_module1/src/env.dart';
+import 'package:konnek_native_core/bridge_method_channel.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
+import 'package:konnek_native_core/src/env.dart';
 
 class InterModule {
   static String clientId = "";

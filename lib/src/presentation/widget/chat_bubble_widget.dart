@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/assets/assets.dart';
-import 'package:flutter_module1/src/data/models/response/bot_payload_data_model.dart';
-import 'package:flutter_module1/src/data/models/response/carousel_payload_data_model.dart';
-import 'package:flutter_module1/src/data/models/response/csat_payload_data_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
-import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
-import 'package:flutter_module1/src/presentation/widget/carousel_chat_bubble_widget.dart';
-import 'package:flutter_module1/src/support/app_file_helper.dart';
+import 'package:konnek_native_core/assets/assets.dart';
+import 'package:konnek_native_core/src/data/models/response/bot_payload_data_model.dart';
+import 'package:konnek_native_core/src/data/models/response/carousel_payload_data_model.dart';
+import 'package:konnek_native_core/src/data/models/response/csat_payload_data_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
+import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
+import 'package:konnek_native_core/src/presentation/widget/carousel_chat_bubble_widget.dart';
+import 'package:konnek_native_core/src/support/app_file_helper.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
   final ConversationList data;

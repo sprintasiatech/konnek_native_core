@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
-import 'package:flutter_module1/src/presentation/screen/login_screen.dart';
+import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
+import 'package:konnek_native_core/src/presentation/screen/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ChatButtonWidget extends StatefulWidget {

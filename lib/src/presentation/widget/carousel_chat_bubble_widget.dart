@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/src/data/models/response/carousel_payload_data_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/carousel_payload_data_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CarouselChatBubbleWidget extends StatefulWidget {

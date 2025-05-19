@@ -1,4 +1,4 @@
-name: flutter_module1
+name: konnek_native_core
 description: "A new Flutter module project."
 
 # The following defines the version and build number for your application.
@@ -94,5 +94,5 @@ flutter:
   # identifiers, which may be completely independent or the same as these.
   module:
     androidX: true
-    androidPackage: com.example.flutter_module1
-    iosBundleIdentifier: com.example.flutterModule1
+    androidPackage: com.konnek_native.core
+    iosBundleIdentifier: com.konnekNative.core

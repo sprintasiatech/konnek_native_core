@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/src/presentation/interface/live_chat_sdk.dart';
+import 'package:konnek_native_core/src/presentation/interface/live_chat_sdk.dart';
 
 /// Helper class to put your draggable floating top of your screen
 class DraggableFloatingWidget extends StatefulWidget {

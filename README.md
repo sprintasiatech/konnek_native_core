@@ -1,4 +1,4 @@
-# flutter_module1
+# konnek_native_core
 
 A new Flutter module project.
 

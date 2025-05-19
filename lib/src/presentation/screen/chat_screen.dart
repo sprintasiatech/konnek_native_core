@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/assets/assets.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
-import 'package:flutter_module1/src/data/source/local/chat_local_source.dart';
-import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
-import 'package:flutter_module1/src/presentation/controller/chat_controller.dart';
-import 'package:flutter_module1/src/presentation/widget/chat_bubble_widget.dart';
-import 'package:flutter_module1/src/presentation/widget/show_image_widget.dart';
+import 'package:konnek_native_core/assets/assets.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
+import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
+import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
+import 'package:konnek_native_core/src/presentation/controller/chat_controller.dart';
+import 'package:konnek_native_core/src/presentation/widget/chat_bubble_widget.dart';
+import 'package:konnek_native_core/src/presentation/widget/show_image_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatScreen extends StatefulWidget {

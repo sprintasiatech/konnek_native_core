@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/send_chat_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/upload_media_response_model.dart';
-import 'package:flutter_module1/src/data/source/remote/chat_remote_source.dart';
-import 'package:flutter_module1/src/domain/repository/chat_repository.dart';
+import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/send_chat_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/upload_media_response_model.dart';
+import 'package:konnek_native_core/src/data/source/remote/chat_remote_source.dart';
+import 'package:konnek_native_core/src/domain/repository/chat_repository.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:uuid/uuid.dart';
 

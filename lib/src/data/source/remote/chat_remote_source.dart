@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
-import 'package:flutter_module1/src/env.dart';
-import 'package:flutter_module1/src/support/app_socketio_service.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';
+import 'package:konnek_native_core/src/env.dart';
+import 'package:konnek_native_core/src/support/app_socketio_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 abstract class ChatRemoteSource {

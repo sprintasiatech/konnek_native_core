@@ -4,9 +4,9 @@ import 'dart:developer';
 import 'package:fam_coding_supply/logic/app_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/env.dart';
-import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/env.dart';
+import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
 
 class BridgeMethodChannel {
   static const MethodChannel _channel = MethodChannel('konnek_native');

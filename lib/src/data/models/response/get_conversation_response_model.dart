@@ -1,4 +1,4 @@
-import 'package:flutter_module1/src/presentation/controller/chat_controller.dart';
+import 'package:konnek_native_core/src/presentation/controller/chat_controller.dart';
 
 class GetConversationResponseModel {
   MetaGetConversation? meta;
