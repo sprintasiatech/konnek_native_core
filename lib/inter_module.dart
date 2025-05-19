@@ -24,11 +24,6 @@ class InterModule {
       ) async {
     // clientId = inputClientId;
     // clientSecret = inputClientSecret;
-    BridgeMethodChannel.setupHandler();
-    setupConfig = (dataConfig) {
-      AppLoggerCS.debugLog("[InterModule][initialize][setupConfig] called");
-      BridgeMethodChannel.configData(dataConfig.toJson());
-    };
 
     EnvironmentConfig.flavor = Flavor.staging;
     // await LiveChatSdk().initialize();
@@ -42,6 +37,13 @@ class InterModule {
     await famCodingSupply.appConnectivityService.init();
     await famCodingSupply.appDeviceInfo.getDeviceData();
     await famCodingSupply.localServiceHive.init();
+
+    BridgeMethodChannel.setupHandler();
+
+    setupConfig = (dataConfig) {
+      AppLoggerCS.debugLog("[InterModule][initialize][setupConfig] called");
+      // BridgeMethodChannel.configData(dataConfig.toJson());
+    };
   }
 
   // Widget entryPointWidget() {

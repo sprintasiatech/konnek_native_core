@@ -560,6 +560,28 @@ class AppController {
 
   static DataGetConfig? dataGetConfigValue;
 
+  Future<void> getConfigFromNative({
+    required DataGetConfig dataInput,
+    void Function(DataGetConfig data)? onSuccess,
+    void Function(String errorMessage)? onFailed,
+  }) async {
+    try {
+      DataGetConfig tempDataConfig = dataInput;
+      Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(dataInput.avatarImage!);
+      tempDataConfig.avatarImageBit = dataAvatar;
+      Uint8List dataIcon = await AppBase64ConverterHelper().decodeBase64Cleaning(dataInput.iosIcon!);
+      tempDataConfig.widgetIconBit = dataIcon;
+      dataGetConfigValue = tempDataConfig;
+
+      await configValue();
+      onSuccess?.call(tempDataConfig);
+      return;
+    } catch (e) {
+      onFailed?.call(e.toString());
+      return;
+    }
+  }
+
   Future<void> getConfigFromLocal({
     void Function(DataGetConfig data)? onSuccess,
     void Function(String errorMessage)? onFailed,

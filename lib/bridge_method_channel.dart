@@ -5,6 +5,7 @@ import 'package:fam_coding_supply/logic/app_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
 import 'package:konnek_native_core/src/env.dart';
 import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
 
@@ -48,8 +49,15 @@ class BridgeMethodChannel {
       }
       if (call.method == 'fetchConfigData') {
         AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] call fetchConfigData");
-        AppController().getConfig(
-          onSuccess: () {
+        final String data = call.arguments;
+        AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] data $data");
+        GetConfigResponseModel dataMap = GetConfigResponseModel.fromJson(jsonDecode(data));
+        AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] dataMap ${jsonEncode(dataMap)}");
+        // InterModule.setupConfig(dataMap.dataGetConfigValue!);
+        await AppController().getConfigFromNative(
+          dataInput: dataMap.data!,
+          onSuccess: (output) {
+            AppLoggerCS.debugLog("[BridgeMethodChannel][getConfigFromNative] onSuccess");
             InterModule.triggerUI.call();
           },
         );
