@@ -650,7 +650,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         InkWell(
                                           onTap: () async {
                                             uploadFile = await AppImagePickerServiceCS().getImageAsFile(
-                                              imageQuality: 60,
+                                              imageQuality: 85,
                                               onFileName: (fileNameValue) {
                                                 fileName = fileNameValue;
                                               },
