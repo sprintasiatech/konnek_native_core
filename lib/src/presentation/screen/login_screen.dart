@@ -126,6 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => errorText = 'Email is required');
     } else if (!email.isValidEmail) {
       setState(() => errorText = 'Enter a valid email');
+    } else if (!email.isAllLowercaseEmail) {
+      setState(() => errorText = 'Only lowercase accepted');
     } else {
       setState(() => errorText = "");
     }
