@@ -769,7 +769,7 @@ class AppController {
             if (e.status == 0) {
               return e.status = 1;
             }
-          });
+          }).toList();
           conversationListFirstChat.addAll(conversationList);
           onGreetingsFailed?.call(output.meta!);
           return;
