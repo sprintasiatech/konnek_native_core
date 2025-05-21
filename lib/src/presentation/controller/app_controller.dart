@@ -567,18 +567,21 @@ class AppController {
   }) async {
     try {
       DataGetConfig tempDataConfig = dataInput;
-      Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(dataInput.avatarImage!);
-      tempDataConfig.avatarImageBit = dataAvatar;
-      Uint8List dataIcon = await AppBase64ConverterHelper().decodeBase64Cleaning(dataInput.iosIcon!);
-      tempDataConfig.widgetIconBit = dataIcon;
+      if (dataInput.avatarImage != null) {
+        Uint8List dataAvatar = await AppBase64ConverterHelper().decodeBase64Cleaning(dataInput.avatarImage!);
+        tempDataConfig.avatarImageBit = dataAvatar;
+      }
+      if (dataInput.iosIcon != null) {
+        Uint8List dataIcon = await AppBase64ConverterHelper().decodeBase64Cleaning(dataInput.iosIcon!);
+        tempDataConfig.widgetIconBit = dataIcon;
+      }
       dataGetConfigValue = tempDataConfig;
 
       await configValue();
       onSuccess?.call(tempDataConfig);
-      return;
     } catch (e) {
+      AppLoggerCS.debugLog("[getConfigFromNative] error $e");
       onFailed?.call(e.toString());
-      return;
     }
   }
 
