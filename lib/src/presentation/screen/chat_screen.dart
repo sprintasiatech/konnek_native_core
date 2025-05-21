@@ -836,30 +836,34 @@ class _ChatScreenState extends State<ChatScreen> {
           },
         );
       } else {
-        AppController().sendChat(
-          text: textController.text,
-          onSuccess: () async {
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            setState(() {});
-          },
-          onChatSentFirst: () {
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            setState(() {});
-          },
-          onGreetingsFailed: (value) {
-            setState(() {
+        if (AppController().isOnlySpaces(textController)) {
+          //
+        } else {
+          AppController().sendChat(
+            text: textController.text,
+            onSuccess: () async {
               _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-              isTextFieldFocused = true;
-              isTextFieldEmpty = false;
-              String valueGreetings = value.message!.split(' ').last;
-              textController.text = valueGreetings;
-            });
-          },
-          onCustomerBlockedFailed: () {
-            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-            setState(() {});
-          },
-        );
+              setState(() {});
+            },
+            onChatSentFirst: () {
+              _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+              setState(() {});
+            },
+            onGreetingsFailed: (value) {
+              setState(() {
+                _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+                isTextFieldFocused = true;
+                isTextFieldEmpty = false;
+                String valueGreetings = value.message!.split(' ').last;
+                textController.text = valueGreetings;
+              });
+            },
+            onCustomerBlockedFailed: () {
+              _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+              setState(() {});
+            },
+          );
+        }
       }
     }
 

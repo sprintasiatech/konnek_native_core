@@ -56,6 +56,12 @@ class AppController {
     InterModule.accessToken = "";
   }
 
+  bool isOnlySpaces(TextEditingController textController) {
+    bool value = textController.text.trim().isEmpty && textController.text.isNotEmpty;
+    AppLoggerCS.debugLog("value: $value");
+    return value;
+  }
+
   static void clearRoomClosed() {
     currentPage = 1;
     limit = 20;
@@ -509,6 +515,12 @@ class AppController {
     try {
       scaffoldMessengerCallback.call(FetchingState.loading);
 
+      if (InterModule.clientId == "") {
+        onFailed?.call("empty data 0");
+        scaffoldMessengerCallback.call(FetchingState.failed);
+        return;
+      }
+
       AppController.socketReady = false;
 
       GetConfigResponseModel? getConfigResponseModel = await ChatRepositoryImpl().getConfig(
@@ -751,9 +763,8 @@ class AppController {
             messageId: uuid,
             messageTime: DateTime.now().toUtc(),
           );
-
           conversationList.add(chatModel);
-          
+
           conversationList.map((e) {
             if (e.status == 0) {
               return e.status = 1;
