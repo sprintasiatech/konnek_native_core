@@ -646,54 +646,58 @@ class _ChatScreenState extends State<ChatScreen> {
                                             ),
                                           ),
                                         ),
-                                        // SizedBox(width: 12),
-                                        InkWell(
-                                          onTap: () async {
-                                            uploadFile = await AppImagePickerServiceCS().getImageAsFile(
-                                              imageQuality: 85,
-                                              onFileName: (fileNameValue) {
-                                                fileName = fileNameValue;
-                                              },
-                                              onSizeFile: (sizeFileValue) {
-                                                fileSize = sizeFileValue;
-                                              },
-                                            );
-                                            metaFile = "File Name: $fileName\nSize File: ${fileSize.toStringAsFixed(3)} MB";
-                                            buttonValidation();
-                                            setState(() {});
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(12),
-                                            child: Icon(
-                                              Icons.image,
-                                              size: 24,
+                                        if (AppController.isWebSocketStart) ...[
+                                          // SizedBox(width: 12),
+                                          InkWell(
+                                            onTap: () async {
+                                              uploadFile = await AppImagePickerServiceCS().getImageAsFile(
+                                                imageQuality: 85,
+                                                onFileName: (fileNameValue) {
+                                                  fileName = fileNameValue;
+                                                },
+                                                onSizeFile: (sizeFileValue) {
+                                                  fileSize = sizeFileValue;
+                                                },
+                                              );
+                                              metaFile = "File Name: $fileName\nSize File: ${fileSize.toStringAsFixed(3)} MB";
+                                              buttonValidation();
+                                              setState(() {});
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Icon(
+                                                Icons.image,
+                                                size: 24,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        // SizedBox(width: 12),
-                                        InkWell(
-                                          onTap: () async {
-                                            uploadFile = await AppFilePickerServiceCS().pickFiles(
-                                              onFileName: (fileNameValue) {
-                                                fileName = fileNameValue;
-                                              },
-                                              onSizeFile: (sizeFileValue) {
-                                                fileSize = sizeFileValue;
-                                              },
-                                            );
-                                            buttonValidation();
-                                            setState(() {});
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(12),
-                                            child: Icon(
-                                              // Icons.send,
-                                              Icons.attach_file_rounded,
-                                              size: 24,
+                                          // SizedBox(width: 12),
+                                          InkWell(
+                                            onTap: () async {
+                                              uploadFile = await AppFilePickerServiceCS().pickFiles(
+                                                onFileName: (fileNameValue) {
+                                                  fileName = fileNameValue;
+                                                },
+                                                onSizeFile: (sizeFileValue) {
+                                                  fileSize = sizeFileValue;
+                                                },
+                                              );
+                                              buttonValidation();
+                                              setState(() {});
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.all(12),
+                                              child: Icon(
+                                                // Icons.send,
+                                                Icons.attach_file_rounded,
+                                                size: 24,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        // SizedBox(width: 12),
+                                          // SizedBox(width: 12),
+                                        ] else ...[
+                                          SizedBox(width: 12),
+                                        ],
                                       ],
                                     ),
                               SizedBox(height: 5),
