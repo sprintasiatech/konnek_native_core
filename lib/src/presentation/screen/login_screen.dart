@@ -1,6 +1,7 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:konnek_native_core/assets/assets.dart';
+import 'package:konnek_native_core/bridge_method_channel.dart';
 import 'package:konnek_native_core/inter_module.dart';
 import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
 import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
@@ -139,6 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onPopInvokedWithResult: (didPop, result) {
         AppLoggerCS.debugLog("didPop: $didPop");
         AppLoggerCS.debugLog("result: $result");
+        BridgeMethodChannel.disposeEngine();
       },
       child: GestureDetector(
         onTap: () {

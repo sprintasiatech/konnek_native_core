@@ -65,6 +65,19 @@ class BridgeMethodChannel {
     });
   }
 
+  static Future<String?> disposeEngine() async {
+    try {
+      AppLoggerCS.debugLog("[BridgeMethodChannel][disposeEngine] call from flutter");
+      final version = await _channel.invokeMethod<String>(
+        'disposeEngine',
+      );
+      return version;
+    } catch (e) {
+      AppLoggerCS.debugLog("[BridgeMethodChannel][disposeEngine] error $e");
+      return null;
+    }
+  }
+
   // static Future<String?> configData(Map<String, dynamic> data) async {
   //   try {
   //     AppLoggerCS.debugLog("[BridgeMethodChannel][configData] call from flutter ${jsonEncode(data)}");
