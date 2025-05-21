@@ -704,13 +704,13 @@ class AppController {
   }) async {
     isLoading = true;
     try {
-      String uuid = const Uuid().v4();
+      String uuidHolder = const Uuid().v4();
       ConversationList? chatModel0;
       chatModel0 = null;
       chatModel0 = ConversationList(
         fromType: "1",
         text: text,
-        messageId: uuid,
+        messageId: uuidHolder,
         messageTime: DateTime.now().toUtc(),
         status: 0,
       );
@@ -751,7 +751,14 @@ class AppController {
             messageId: uuid,
             messageTime: DateTime.now().toUtc(),
           );
+
           conversationList.add(chatModel);
+          
+          conversationList.map((e) {
+            if (e.status == 0) {
+              return e.status = 1;
+            }
+          });
           conversationListFirstChat.addAll(conversationList);
           onGreetingsFailed?.call(output.meta!);
           return;
@@ -830,7 +837,7 @@ class AppController {
         AppSocketioService.socket.emit(
           "chat",
           {
-            "message_id": uuid,
+            "message_id": uuidHolder,
             "reply_id": null,
             "ttl": 5,
             "text": text,
