@@ -33,6 +33,7 @@ class DataGetConfig {
   String? iosIcon;
   String? preview;
   bool? status;
+  bool? textStatus;
   String? textButton;
   String? textButtonColor;
   Uint8List? avatarImageBit;
@@ -51,6 +52,7 @@ class DataGetConfig {
     this.iosIcon,
     this.preview,
     this.status,
+    this.textStatus,
     this.textButton,
     this.textButtonColor,
   });
@@ -68,6 +70,7 @@ class DataGetConfig {
         iosIcon: json["ios_icon"],
         preview: json["preview"],
         status: json["status"],
+        textStatus: json["text_status"],
         textButton: json["text_button"],
         textButtonColor: json["text_button_color"],
       );
@@ -85,6 +88,7 @@ class DataGetConfig {
         "ios_icon": iosIcon,
         "preview": preview,
         "status": status,
+        "text_status": textStatus,
         "text_button": textButton,
         "text_button_color": textButtonColor,
       };

@@ -22,9 +22,32 @@ class LiveChatSdkScreen extends StatefulWidget {
 }
 
 class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
-  Offset position = Offset(70, -40);
+  Offset position = Offset(90, -30);
+  Size? screenSize;
 
   final LiveChatSdk liveChatSdk = LiveChatSdk();
+
+  void handlePositionFloating() {
+    // AppLoggerCS.debugLog("handlePositionFloating");
+    screenSize = MediaQuery.of(context).size;
+    // AppLoggerCS.debugLog("screenSize!.width: ${screenSize!.width}");
+    // AppLoggerCS.debugLog("screenSize!.height: ${screenSize!.height}");
+    if (screenSize != null) {
+      // position = Offset(90, -30);
+      position = Offset(screenSize!.width - 80, screenSize!.height - 160); // 80 = button size + margin
+    } else {
+      position = Offset(90, -30);
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // handlePositionFloating();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

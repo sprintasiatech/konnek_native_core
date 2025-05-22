@@ -661,7 +661,11 @@ class AppController {
       headerBackgroundColor = hexToColor(dataGetConfigValue!.headerBackgroundColor!);
       floatingButtonColor = hexToColor(dataGetConfigValue!.buttonColor!);
       floatingTextColor = hexToColor(dataGetConfigValue!.textButtonColor!);
-      floatingText = "${dataGetConfigValue!.textButton}";
+      if (dataGetConfigValue!.textStatus != null && dataGetConfigValue!.textStatus!) {
+        floatingText = "${dataGetConfigValue!.textButton}";
+      } else {
+        floatingText = "";
+      }
       iconWidget = dataGetConfigValue!.widgetIconBit;
       // iconWidget.value = dataGetConfigValue!.widgetIconBit;
       // AppLoggerCS.debugLog("iyconWidget.value: ${iconWidget.value}");
