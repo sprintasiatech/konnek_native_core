@@ -644,7 +644,7 @@ class AppController {
   }
 
   static Color headerTextColor = Colors.green;
-  static Color headerBackgroundColor = Colors.teal;
+  static Color headerBackgroundColor = Colors.white;
   static Color floatingButtonColor = Colors.white;
   static Color floatingTextColor = Colors.black;
   static String floatingText = "";
