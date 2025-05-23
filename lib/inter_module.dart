@@ -1,4 +1,5 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
+import 'package:flutter/material.dart';
 import 'package:konnek_native_core/bridge_method_channel.dart';
 import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
 import 'package:konnek_native_core/src/env.dart';
@@ -22,6 +23,7 @@ class InterModule {
       //   dynamic configuration,
       // }
       ) async {
+    WidgetsFlutterBinding.ensureInitialized();
     // clientId = inputClientId;
     // clientSecret = inputClientSecret;
 
