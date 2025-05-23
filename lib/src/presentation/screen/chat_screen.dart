@@ -840,7 +840,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
         );
       } else {
-        if (AppController().isOnlySpaces(textController)) {
+        if (AppController().isOnlySpaces(textController) || textController.text.isEmpty) {
           //
         } else {
           AppController().sendChat(
