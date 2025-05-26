@@ -165,12 +165,21 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: (openImage && srcImage != "") ? false : true,
       onPopInvokedWithResult: (didPop, result) async {
-        isLoading = false;
-        AppController.clear();
-        await ChatLocalSource.localServiceHive.user.clear();
-        setState(() {});
+        if (openImage && srcImage != "") {
+          AppLoggerCS.debugLog("close");
+          setState(() {
+            openImage = false;
+            srcImage = "";
+          });
+        } else {
+          AppLoggerCS.debugLog("Here");
+          isLoading = false;
+          AppController.clear();
+          await ChatLocalSource.localServiceHive.user.clear();
+          setState(() {});
+        }
       },
       child: GestureDetector(
         onTap: () {
@@ -755,16 +764,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: MediaQuery.of(context).size.width,
                   child: Stack(
                     children: [
-                      ShowImageWidget(
-                        image: srcImage,
-                        confirmDismiss: (direction) async {
-                          AppLoggerCS.debugLog("close");
-                          setState(() {
-                            openImage = false;
-                            srcImage = "";
-                          });
-                          return false;
-                        },
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: ShowImageWidget(
+                            image: srcImage,
+                            confirmDismiss: (direction) async {
+                              AppLoggerCS.debugLog("close");
+                              setState(() {
+                                openImage = false;
+                                srcImage = "";
+                              });
+                              return false;
+                            },
+                          ),
+                        ),
                       ),
                       Positioned(
                         right: 30,
