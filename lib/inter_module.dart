@@ -35,10 +35,10 @@ class InterModule {
     appApiService.useFoundation = true;
     appApiService.useLogger = true;
     //
+    await famCodingSupply.localServiceHive.init();
     await famCodingSupply.appInfo.init();
     await famCodingSupply.appConnectivityService.init();
     await famCodingSupply.appDeviceInfo.getDeviceData();
-    await famCodingSupply.localServiceHive.init();
 
     BridgeMethodChannel.setupHandler();
 
