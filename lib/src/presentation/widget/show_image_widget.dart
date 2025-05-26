@@ -20,7 +20,7 @@ class _ShowImageWidgetState extends State<ShowImageWidget> {
   Widget build(BuildContext context) {
     return Dismissible(
       key: const Key("value"),
-      direction: DismissDirection.down,
+      direction: DismissDirection.vertical,
       confirmDismiss: widget.confirmDismiss,
       onDismissed: (direction) {
         debugPrint("direction $direction");
