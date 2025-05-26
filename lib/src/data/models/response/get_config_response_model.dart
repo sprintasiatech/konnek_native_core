@@ -33,7 +33,7 @@ class DataGetConfig {
   String? iosIcon;
   String? preview;
   bool? status;
-  bool? textStatus;
+  dynamic? textStatus;
   String? textButton;
   String? textButtonColor;
   Uint8List? avatarImageBit;
