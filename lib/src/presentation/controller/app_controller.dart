@@ -799,9 +799,11 @@ class AppController {
           await ChatLocalSource().setAccessToken(output.data!.token!);
 
           if (!isWebSocketStart) {
-            await startWebSocketIO();
-            await handleWebSocketIO();
-            isWebSocketStart = true;
+            await Future.delayed(const Duration(milliseconds: 300), () async {
+              await startWebSocketIO();
+              await handleWebSocketIO();
+              isWebSocketStart = true;
+            });
           }
 
           conversationData = null;
