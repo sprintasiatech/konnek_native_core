@@ -1,5 +1,6 @@
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:konnek_native_core/assets/assets.dart';
 import 'package:konnek_native_core/bridge_method_channel.dart';
 import 'package:konnek_native_core/inter_module.dart';
@@ -141,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
         AppLoggerCS.debugLog("didPop: $didPop");
         AppLoggerCS.debugLog("result: $result");
         BridgeMethodChannel.disposeEngine();
+        SystemNavigator.pop(animated: true);
       },
       child: GestureDetector(
         onTap: () {
@@ -150,6 +152,16 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.white,
+            leading: InkWell(
+              onTap: () {
+                BridgeMethodChannel.disposeEngine();
+                SystemNavigator.pop();
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 24,
+              ),
+            ),
           ),
           body: SingleChildScrollView(
             child: Container(
