@@ -28,7 +28,7 @@ import 'package:uuid/uuid.dart';
 
 enum RoomCloseState {
   close,
-  closeWaiting,
+  closeWaiting, //csat
   open,
 }
 
@@ -447,7 +447,7 @@ class AppController {
         text: postbackDataChosen.title,
         type: "postback",
         messageId: uuid,
-        status: 2,
+        status: isRoomClosed == RoomCloseState.closeWaiting ? 2 : 0,
         messageTime: currentDateValue.toUtc(),
       );
       conversationList.add(chatModel);
