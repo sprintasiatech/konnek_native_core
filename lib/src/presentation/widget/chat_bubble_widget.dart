@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:konnek_native_core/assets/assets.dart';
 import 'package:konnek_native_core/src/data/models/response/bot_payload_data_model.dart';
 import 'package:konnek_native_core/src/data/models/response/carousel_payload_data_model.dart';
@@ -517,6 +518,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   @override
   Widget build(BuildContext context) {
     if (chatCategoryValidation(widget.data)) {
+      // Client
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -538,6 +540,25 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       // }
                     }
                   }
+                },
+                onLongPress: () {
+                  Clipboard.setData(ClipboardData(text: "${widget.data.text}"));
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(
+                    SnackBar(
+                      duration: const Duration(milliseconds: 500),
+                      backgroundColor: Colors.grey.shade900,
+                      content: Text(
+                        "Text Copied",
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
                 },
                 child: Container(
                   padding: EdgeInsets.all(12),
@@ -616,6 +637,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         ],
       );
     } else {
+      // Admin
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -654,6 +676,25 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                     // }
                   }
                 }
+              },
+              onLongPress: () {
+                Clipboard.setData(ClipboardData(text: "${widget.data.text}"));
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(
+                  SnackBar(
+                    duration: const Duration(milliseconds: 500),
+                    backgroundColor: Colors.grey.shade900,
+                    content: Text(
+                      "Text Copied",
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                );
               },
               child: Container(
                 padding: EdgeInsets.all(12),
