@@ -17,7 +17,7 @@ extension EmailValidator on String {
     if (!emailRegex.hasMatch(this)) return false;
 
     // Then check if it equals its lowercase version
-    return this == this.toLowerCase();
+    return this == toLowerCase();
   }
 
   bool get isValidName => RegExp(r'^[a-zA-Z]{1,20}$').hasMatch(this);

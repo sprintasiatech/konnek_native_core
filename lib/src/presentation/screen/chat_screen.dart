@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:fam_coding_supply/fam_coding_supply.dart';
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:konnek_native_core/assets/assets.dart';
 import 'package:konnek_native_core/inter_module.dart';
 import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
@@ -10,6 +11,9 @@ import 'package:konnek_native_core/src/presentation/controller/app_controller.da
 import 'package:konnek_native_core/src/presentation/controller/chat_controller.dart';
 import 'package:konnek_native_core/src/presentation/widget/chat_bubble_widget.dart';
 import 'package:konnek_native_core/src/presentation/widget/show_image_widget.dart';
+import 'package:konnek_native_core/src/support/app_file_picker.dart';
+import 'package:konnek_native_core/src/support/app_image_picker.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -130,12 +134,6 @@ class _ChatScreenState extends State<ChatScreen> {
         };
       }
     });
-  }
-
-  void _scrollToTop() {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
   }
 
   void _scrollToBottom() {
@@ -417,13 +415,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                         // AppLoggerCS.debugLog("up");
                                         _scrollToBottom();
                                       },
-                                      child: Container(
+                                      child: SizedBox(
                                         // color: Colors.blue,
                                         // margin: EdgeInsets.all(20),
                                         height: 50,
                                         width: 50,
                                         child: CircleAvatar(
-                                          backgroundColor: const Color(0xff2a55a4).withOpacity(0.6),
+                                          backgroundColor: const Color(0xff2a55a4).withValues(alpha: 0.6),
                                           child: Icon(
                                             Icons.keyboard_arrow_down_outlined,
                                             size: 35,

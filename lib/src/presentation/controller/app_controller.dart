@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:konnek_native_core/inter_module.dart';
 import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';
@@ -19,6 +18,8 @@ import 'package:konnek_native_core/src/data/models/response/socket_room_handover
 import 'package:konnek_native_core/src/data/models/response/upload_media_response_model.dart';
 import 'package:konnek_native_core/src/data/repositories/chat_repository_impl.dart';
 import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
+import 'package:konnek_native_core/src/support/app_base64converter_helper.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
 import 'package:konnek_native_core/src/support/app_socketio_service.dart';
 import 'package:konnek_native_core/src/support/jwt_converter.dart';
 import 'package:intl/intl.dart';
@@ -74,6 +75,7 @@ class AppController {
   }) async {
     try {
       AppLoggerCS.debugLog("[AppController][startWebSocketIO] called");
+      // ignore: unused_local_variable
       io.Socket? data = ChatRepositoryImpl().startWebSocketIO();
       onSuccess?.call();
     } catch (e) {

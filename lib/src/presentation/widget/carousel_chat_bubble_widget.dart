@@ -20,8 +20,7 @@ class CarouselChatBubbleWidget extends StatefulWidget {
 }
 
 class _CarouselChatBubbleWidgetState extends State<CarouselChatBubbleWidget> {
-  int _currentPage = 0;
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +86,7 @@ class _CarouselChatBubbleWidgetState extends State<CarouselChatBubbleWidget> {
                         ),
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xff203080).withOpacity(0.1),
+                          color: const Color(0xff203080).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -110,7 +109,7 @@ class _CarouselChatBubbleWidgetState extends State<CarouselChatBubbleWidget> {
             // },
           ),
         ),
-        Container(
+        SizedBox(
           // color: Colors.red,
           height: 350,
           child: Row(

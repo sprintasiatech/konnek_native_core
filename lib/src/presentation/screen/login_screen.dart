@@ -1,12 +1,13 @@
-import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:konnek_native_core/assets/assets.dart';
 import 'package:konnek_native_core/bridge_method_channel.dart';
 import 'package:konnek_native_core/inter_module.dart';
 import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
 import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
 import 'package:konnek_native_core/src/presentation/screen/chat_screen.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
 import 'package:konnek_native_core/src/support/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -329,7 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           boxShadow: [
                             BoxShadow(
                               offset: Offset(2, 2),
-                              color: Colors.lightBlue.shade100.withOpacity(0.5),
+                              color: Colors.lightBlue.shade100.withValues(alpha: 0.5),
                               blurRadius: 2,
                               spreadRadius: 1,
                             ),
@@ -363,6 +364,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               .then((value) {
                             AppController.isWebSocketStart = false;
                             Navigator.push(
+                              // ignore: use_build_context_synchronously
                               context,
                               MaterialPageRoute(
                                 builder: (context) {

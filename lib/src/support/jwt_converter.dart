@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:fam_coding_supply/logic/app_logger.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
 
 class JwtConverter {
   Map<String, dynamic> decodeJwt(String token) {
@@ -21,7 +21,6 @@ class JwtConverter {
       };
     } catch (e) {
       AppLoggerCS.debugLog("[decodeJwt] error: $e");
-      // throw FormatException('Failed to decode JWT: ${e.toString()}');
       rethrow;
     }
   }

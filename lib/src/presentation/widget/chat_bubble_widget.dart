@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:konnek_native_core/assets/assets.dart';
 import 'package:konnek_native_core/src/data/models/response/bot_payload_data_model.dart';
 import 'package:konnek_native_core/src/data/models/response/carousel_payload_data_model.dart';
@@ -12,6 +13,8 @@ import 'package:konnek_native_core/src/data/models/response/get_conversation_res
 import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
 import 'package:konnek_native_core/src/presentation/widget/carousel_chat_bubble_widget.dart';
 import 'package:konnek_native_core/src/support/app_file_helper.dart';
+import 'package:konnek_native_core/src/support/app_image_picker.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
   final ConversationList data;
@@ -37,21 +40,6 @@ class ChatBubbleWidget extends StatefulWidget {
 
 class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   bool chatCategoryValidation(ConversationList datas) {
-    // Map<String, dynamic>? userData = await ChatLocalSource().getClientData();
-    String name = "";
-    String username = "";
-    // if (userData != null) {
-    name = AppController.nameUser;
-    username = AppController.usernameUser;
-    // AppLoggerCS.debugLog("AppController.nameUser ${AppController.nameUser}");
-    // AppLoggerCS.debugLog("AppController.usernameUser ${AppController.usernameUser}");
-
-    // }
-    // if (datas.session?.agent?.id == "00000000-0000-0000-0000-000000000000" && datas.fromType == "1" && datas.user?.name == AppController.nameUser) {
-    // if (datas.session?.agent?.id == "00000000-0000-0000-0000-000000000000" && datas.fromType == "1") {
-    // if (!(datas.user?.name == name) && !(datas.user?.username == username)) {
-    //  if (datas.createdBy == name) {
-    // if (datas.user?.name == AppController.nameUser && datas.user?.username == AppController.usernameUser) {
     if (datas.fromType == "1") {
       return true;
     } else {
@@ -60,8 +48,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   }
 
   String handleIcon(int status) {
-    // AppLoggerCS.debugLog('status: $status text: ${widget.data.text} messageId: ${widget.data.messageId}');
-    // AppLoggerCS.debugLog('text: ${widget.data.text}');
     if (status > 0) {
       return Assets.icDoubleTick;
     } else {
@@ -107,7 +93,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                         padding: EdgeInsets.all(6),
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xff203080).withOpacity(0.1),
+                          color: const Color(0xff203080).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -182,7 +168,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                             padding: EdgeInsets.all(6),
                             height: 40,
                             decoration: BoxDecoration(
-                              color: const Color(0xff203080).withOpacity(0.1),
+                              color: const Color(0xff203080).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -700,7 +686,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   // color: Colors.purpleAccent.shade200.withOpacity(0.3),
-                  color: const Color(0xff203080).withOpacity(0.2),
+                  color: const Color(0xff203080).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
