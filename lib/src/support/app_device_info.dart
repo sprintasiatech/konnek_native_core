@@ -19,8 +19,6 @@ class AppDeviceInfoCS {
     // Get Device Information
     if (kIsWeb) {
       WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-      // AppLoggerCS.debugLog("webBrowserInfo ${(webBrowserInfo.productSub)}");
-      // AppLoggerCS.debugLog("webBrowserInfo ${webBrowserInfo.appCodeName} ${webBrowserInfo.appName} ${webBrowserInfo.appVersion}");
       deviceId = webBrowserInfo.productSub ?? const Uuid().v4();
       deviceName = "${webBrowserInfo.appCodeName} ${webBrowserInfo.appName} ${webBrowserInfo.appVersion}";
       deviceType = "Web";

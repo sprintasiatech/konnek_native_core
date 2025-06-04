@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';
@@ -111,23 +110,15 @@ class ChatRepositoryImpl extends ChatRepository {
         );
       }
 
-      // String timeFormat = "2025-04-15T08:10:19.992Z";
       String date1 = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      AppLoggerCS.debugLog("date1: $date1");
       String time1 = DateFormat("hh:mm:ss.").format(DateTime.now());
-      AppLoggerCS.debugLog("time1: $time1");
       String concatDateTime = "${date1}T${time1}992Z";
-      AppLoggerCS.debugLog("concatDateTime: $concatDateTime");
 
       requestData.addAll(
         {
-          // "time": DateTime.now().toLocal(),
           "time": concatDateTime,
-          // "time": DateTime.now().toUtc(),
         },
       );
-
-      // AppLoggerCS.debugLog("[uploadMedia] requestData: ${jsonEncode(requestData)}");
 
       Response? response = await remoteSource.uploadMedia(
         requestData: requestData,
@@ -138,7 +129,6 @@ class ChatRepositoryImpl extends ChatRepository {
       if (response.data == null) {
         return null;
       }
-      AppLoggerCS.debugLog("[uploadMedia] response.data: ${jsonEncode(response.data)}");
 
       UploadFilesResponseModel mapping = UploadFilesResponseModel.fromJson(
         response.data,
@@ -165,7 +155,6 @@ class ChatRepositoryImpl extends ChatRepository {
       if (response.data == null) {
         return null;
       }
-      // AppLoggerCS.debugLog("[ChatRepositoryImpl][sendChat] response.data: ${jsonEncode(response.data)}");
       SendChatResponseModel mapping = SendChatResponseModel.fromJson(
         response.data,
       );

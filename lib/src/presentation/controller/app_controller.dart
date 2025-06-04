@@ -59,7 +59,6 @@ class AppController {
 
   bool isOnlySpaces(TextEditingController textController) {
     bool value = textController.text.trim().isEmpty && textController.text.isNotEmpty;
-    AppLoggerCS.debugLog("value: $value");
     return value;
   }
 
@@ -74,7 +73,6 @@ class AppController {
     void Function(String errorMessage)? onFailed,
   }) async {
     try {
-      AppLoggerCS.debugLog("[AppController][startWebSocketIO] called");
       // ignore: unused_local_variable
       io.Socket? data = ChatRepositoryImpl().startWebSocketIO();
       onSuccess?.call();
@@ -107,10 +105,7 @@ class AppController {
       AppController.socketReady = false;
       await ChatLocalSource().setSocketReady(false);
       AppSocketioService.socket.disconnect();
-      AppSocketioService.socket.onDisconnect((_) {
-        AppLoggerCS.debugLog("disconnected");
-        AppLoggerCS.debugLog("disconnected id: ${AppSocketioService.socket.id}");
-      });
+      AppSocketioService.socket.onDisconnect((_) {});
     } catch (e) {
       AppController.socketReady = false;
       await ChatLocalSource().setSocketReady(false);
@@ -138,16 +133,10 @@ class AppController {
   static RoomCloseState isRoomClosed = RoomCloseState.open;
 
   Future<void> handleWebSocketIO({
-    // void Function()? onSuccess,
     void Function(String errorMessage)? onFailed,
   }) async {
     try {
-      // AppSocketioService.socket.onConnect((_) {
-      //   AppLoggerCS.debugLog("onConnect: ${AppSocketioService.socket.toString()}");
-      // });
-
       AppSocketioService.socket.on("chat", (output) async {
-        AppLoggerCS.debugLog("[socket][chat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
 
         sessionId = socket.session!.id!;
@@ -211,7 +200,7 @@ class AppController {
       });
 
       AppSocketioService.socket.on("chat.status", (output) async {
-        AppLoggerCS.debugLog("[socket][chat.status] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][chat.status] output: ${jsonEncode(output)}");
         SocketChatStatusResponseModel socket = SocketChatStatusResponseModel.fromJson(output);
         sessionId = socket.data!.sessionId!;
         roomId = socket.data!.roomId!;
@@ -229,7 +218,7 @@ class AppController {
       });
 
       AppSocketioService.socket.on("room.handover", (output) async {
-        AppLoggerCS.debugLog("[socket][room.handover] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][room.handover] output: ${jsonEncode(output)}");
         SocketRoomHandoverResponseModel socket = SocketRoomHandoverResponseModel.fromJson(output);
         sessionId = socket.data!.session!.id!;
         roomId = socket.data!.session!.roomId!;
@@ -237,7 +226,7 @@ class AppController {
       });
 
       AppSocketioService.socket.on("room.closed", (output) async {
-        AppLoggerCS.debugLog("[socket][room.closed] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][room.closed] output: ${jsonEncode(output)}");
         SocketRoomClosedResponseModel socket = SocketRoomClosedResponseModel.fromJson(output);
         // isWebSocketStart = false;
         if (socket.data?.csat != null) {
@@ -250,7 +239,7 @@ class AppController {
       });
 
       AppSocketioService.socket.on("csat", (output) async {
-        AppLoggerCS.debugLog("[socket][csat] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][csat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
 
         sessionId = socket.session!.id!;
@@ -289,15 +278,14 @@ class AppController {
       });
 
       AppSocketioService.socket.on("csat.close", (output) async {
-        AppLoggerCS.debugLog("[socket][csat.close] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][csat.close] output: ${jsonEncode(output)}");
         isWebSocketStart = false;
         onSocketCSATCloseCalled.call();
       });
 
       AppSocketioService.socket.on("customer.is_blocked", (output) async {
-        AppLoggerCS.debugLog("[socket][customer.is_blocked] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][customer.is_blocked] output: ${jsonEncode(output)}");
         Map<String, dynamic> result = jsonDecode(output);
-        AppLoggerCS.debugLog("[socket][customer.is_blocked] is_blocked: ${result['is_blocked']}");
         isCustomerBlocked = result['is_blocked'];
         if (isCustomerBlocked) {
           InterModule.accessToken = "";
@@ -305,7 +293,7 @@ class AppController {
         onSocketCustomerIsBlockedCalled.call();
       });
       AppSocketioService.socket.on("disconnect", (output) async {
-        AppLoggerCS.debugLog("[socket][disconnect] output: ${jsonEncode(output)}");
+        // AppLoggerCS.debugLog("[socket][disconnect] output: ${jsonEncode(output)}");
         isWebSocketStart = false;
         InterModule.accessToken = "";
         onSocketDisconnectCalled.call();
@@ -340,8 +328,6 @@ class AppController {
       "room_id": jwtValue["payload"]["data"]["room_id"],
       "session_id": jwtValue["payload"]["data"]["session_id"],
     };
-
-    AppLoggerCS.debugLog("[emitBotChat] dataEmit: ${jsonEncode(dataEmit)}");
 
     AppSocketioService.socket.emit(
       "chat",
@@ -381,8 +367,6 @@ class AppController {
       "room_id": jwtValue["payload"]["data"]["room_id"],
       "session_id": jwtValue["payload"]["data"]["session_id"],
     };
-
-    AppLoggerCS.debugLog("[emitCarousel] dataEmit: ${jsonEncode(dataEmit)}");
 
     AppSocketioService.socket.emit(
       "chat",
@@ -434,8 +418,6 @@ class AppController {
         "session_id": jwtValue["payload"]["data"]["session_id"],
       };
 
-      AppLoggerCS.debugLog("[emitCsat] dataEmit: ${jsonEncode(dataEmit)}");
-
       AppSocketioService.socket.emit(
         "chat",
         dataEmit,
@@ -481,8 +463,6 @@ class AppController {
         "room_id": jwtValue["payload"]["data"]["room_id"],
         "session_id": jwtValue["payload"]["data"]["session_id"],
       };
-
-      AppLoggerCS.debugLog("[emitCsatText] dataEmit: ${jsonEncode(dataEmit)}");
 
       AppSocketioService.socket.emit(
         "chat",
@@ -656,7 +636,6 @@ class AppController {
   // static Function() onConfigValueCalled = () {};
 
   static Future<void> configValue() async {
-    AppLoggerCS.debugLog("call configValue");
     if (dataGetConfigValue != null) {
       InterModule.setupConfig(dataGetConfigValue!);
       headerTextColor = hexToColor(dataGetConfigValue!.headerTextColor!);
@@ -669,10 +648,6 @@ class AppController {
         floatingText = "";
       }
       iconWidget = dataGetConfigValue!.widgetIconBit;
-      // iconWidget.value = dataGetConfigValue!.widgetIconBit;
-      // AppLoggerCS.debugLog("iyconWidget.value: ${iconWidget.value}");
-      // onConfigValueCalled.call();
-      AppLoggerCS.debugLog("call configValue done");
     }
   }
 
@@ -748,7 +723,6 @@ class AppController {
           clientId: InterModule.clientId,
           request: requestBody,
         );
-        // AppLoggerCS.debugLog("output: ${output?.toJson()}");
         if (output == null) {
           onFailed?.call("empty data #1110");
           return;
@@ -793,7 +767,6 @@ class AppController {
         }
         if (output.meta?.code == 200) {
           Map jwtValue = JwtConverter().decodeJwt(output.data!.token!);
-          // AppLoggerCS.debugLog("jwtValue: ${jsonEncode(jwtValue)}");
 
           await ChatLocalSource().setSupportData(output.data!);
 
@@ -815,7 +788,6 @@ class AppController {
           _getConversation(
             roomId: jwtValue["payload"]["data"]["room_id"],
             onSuccess: () async {
-              // AppLoggerCS.debugLog("conversationList.last: ${jsonEncode(conversationList.last)}");
               if (isWebSocketStart) {
                 DateTime currentDateTime = DateTime.now();
                 AppSocketioService.socket.emit(
@@ -896,16 +868,13 @@ class AppController {
     String? version,
   }) {
     String date1 = DateFormat("yyyy-MM-dd").format(value ?? DateTime.now());
-    // AppLoggerCS.debugLog("date1: $date1");
     String time1 = DateFormat("hh:mm:ss.").format(value ?? DateTime.now());
-    // AppLoggerCS.debugLog("time1: $time1");
     String concatDateTime = "";
     if (version == "1") {
       concatDateTime = "${date1}T${time1}992Z";
     } else {
       concatDateTime = "${("${date1}T$time1").replaceAll(".", "")}+07.00";
     }
-    AppLoggerCS.debugLog("concatDateTime: $concatDateTime");
     return concatDateTime;
   }
 
@@ -947,7 +916,6 @@ class AppController {
         currentPage: currentPage,
         sessionId: supportData.sessionId ?? "",
       );
-      // AppLoggerCS.debugLog("[_getConversation] output ${jsonEncode(output?.meta?.toJson())}");
       if (output == null) {
         onLoading?.call(false);
         isLoading = false;
@@ -1039,7 +1007,6 @@ class AppController {
         text: text,
         mediaData: mediaData.path,
       );
-      AppLoggerCS.debugLog("[uploadMedia] output ${jsonEncode(output?.meta?.toJson())}");
 
       if (output == null) {
         isLoading = false;
@@ -1120,7 +1087,6 @@ class AppController {
       }
 
       Map<String, dynamic> decodeJwt = JwtConverter().decodeJwt(token);
-      // AppLoggerCS.debugLog("[_decodeJwt] $decodeJwt");
       return decodeJwt;
     } catch (e) {
       onFailed?.call("e: $e");

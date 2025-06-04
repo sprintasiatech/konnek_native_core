@@ -24,19 +24,10 @@ class InterModule {
   static void Function(DataGetConfig data) setupConfig = (DataGetConfig data) {};
   static void Function() triggerUI = () {};
 
-  Future<void> initialize(
-      //   {
-      //   required String inputClientId,
-      //   required String inputClientSecret,
-      //   dynamic configuration,
-      // }
-      ) async {
+  Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // clientId = inputClientId;
-    // clientSecret = inputClientSecret;
 
     EnvironmentConfig.flavor = Flavor.staging;
-    // await LiveChatSdk().initialize();
     AppLoggerCS.useLogger = true;
     AppLoggerCS.useFoundation = true;
     //
@@ -52,11 +43,6 @@ class InterModule {
 
     setupConfig = (dataConfig) {
       AppLoggerCS.debugLog("[InterModule][initialize][setupConfig] called");
-      // BridgeMethodChannel.configData(dataConfig.toJson());
     };
   }
-
-  // Widget entryPointWidget() {
-  //   return InterModulePlatform.instance.entryPointWidget();
-  // }
 }

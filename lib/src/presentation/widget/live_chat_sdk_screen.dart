@@ -28,12 +28,8 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
   final LiveChatSdk liveChatSdk = LiveChatSdk();
 
   void handlePositionFloating() {
-    // AppLoggerCS.debugLog("handlePositionFloating");
     screenSize = MediaQuery.of(context).size;
-    // AppLoggerCS.debugLog("screenSize!.width: ${screenSize!.width}");
-    // AppLoggerCS.debugLog("screenSize!.height: ${screenSize!.height}");
     if (screenSize != null) {
-      // position = Offset(90, -30);
       position = Offset(screenSize!.width - 80, screenSize!.height - 160); // 80 = button size + margin
     } else {
       position = Offset(90, -30);

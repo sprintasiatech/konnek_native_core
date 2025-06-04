@@ -29,86 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // nameController.text = "test";
-    // emailController.text = "test@test.com";
-
-    // nameController.text = "test1";
-    // emailController.text = "test1@test.com";
-
-    // nameController.text = "testX";
-    // emailController.text = "testX@test.com";
-
-    // nameController.text = "testT";
-    // emailController.text = "testT@test.com";
-
-    // nameController.text = "testZ";
-    // emailController.text = "testZ@test.com";
-
-    // nameController.text = "testV";
-    // emailController.text = "testV@test.com";
-
-    // nameController.text = "testJ";
-    // emailController.text = "testJ@test.com";
-
-    // nameController.text = "testN";
-    // emailController.text = "testN@test.com";
-
-    // nameController.text = "testBlock";
-    // emailController.text = "testBlock@test.com";
-
-    // nameController.text = "rabilsdkmobile";
-    // emailController.text = "rabisdk@mail.com";
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       InterModule.triggerUI = () {
         setState(() {});
       };
-      //   AppController.scaffoldMessengerCallback = (FetchingState state) {
-      //     Color colorState = Colors.white;
-      //     String statusState = "";
-      //     if (state == FetchingState.loading) {
-      //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //       colorState = Colors.blue;
-      //       statusState = "Fetching";
-      //     }
-      //     if (state == FetchingState.failed) {
-      //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //       colorState = Colors.red;
-      //       statusState = "Failed";
-      //     }
-      //     if (state == FetchingState.success) {
-      //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //       colorState = Colors.green;
-      //       statusState = "Success";
-      //     }
-      //     ScaffoldMessenger.of(
-      //       context,
-      //     ).showSnackBar(
-      //       SnackBar(
-      //         duration: const Duration(milliseconds: 800),
-      //         backgroundColor: colorState,
-      //         content: Text(
-      //           statusState,
-      //           style: GoogleFonts.inter(
-      //             fontSize: 14,
-      //             fontWeight: FontWeight.w500,
-      //           ),
-      //         ),
-      //       ),
-      //     );
-      //   };
-
-      //   AppController().getConfig(
-      //     onSuccess: () {
-      //       // AppLoggerCS.debugLog("[getConfig] success");
-      //       setState(() {});
-      //       widget.callback?.call();
-      //     },
-      //     onFailed: (errorMessage) {
-      //       // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
-      //       setState(() {});
-      //     },
-      //   );
     });
   }
 
@@ -140,8 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
-        AppLoggerCS.debugLog("didPop: $didPop");
-        AppLoggerCS.debugLog("result: $result");
+        // AppLoggerCS.debugLog("didPop: $didPop");
+        // AppLoggerCS.debugLog("result: $result");
         BridgeMethodChannel.disposeEngine();
         SystemNavigator.pop(animated: true);
       },

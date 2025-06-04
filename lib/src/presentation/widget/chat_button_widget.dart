@@ -20,48 +20,11 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // AppController.scaffoldMessengerCallback = (FetchingState state) {
-      //   Color colorState = Colors.white;
-      //   String statusState = "";
-      //   if (state == FetchingState.loading) {
-      //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //     colorState = Colors.blue;
-      //     statusState = "Fetching";
-      //   }
-      //   if (state == FetchingState.failed) {
-      //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //     colorState = Colors.red;
-      //     statusState = "Failed";
-      //   }
-      //   if (state == FetchingState.success) {
-      //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //     colorState = Colors.green;
-      //     statusState = "Success";
-      //   }
-      //   ScaffoldMessenger.of(
-      //     context,
-      //   ).showSnackBar(
-      //     SnackBar(
-      //       duration: const Duration(milliseconds: 800),
-      //       backgroundColor: colorState,
-      //       content: Text(
-      //         statusState,
-      //         style: GoogleFonts.inter(
-      //           fontSize: 14,
-      //           fontWeight: FontWeight.w500,
-      //         ),
-      //       ),
-      //     ),
-      //   );
-      // };
-
       await AppController().getConfig(
         onSuccess: () {
-          // AppLoggerCS.debugLog("[getConfig] success");
           setState(() {});
         },
         onFailed: (errorMessage) {
-          // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
           setState(() {});
         },
       );
@@ -76,8 +39,6 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
         (AppController.iconWidget != null && AppController.dataGetConfigValue?.iosIcon != "")
             ? Image.memory(
                 AppController.iconWidget!,
-                // AppController.iconWidget.value!,
-                // height: 50,
                 width: 50,
                 fit: BoxFit.cover,
               )
@@ -88,7 +49,6 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
           // "talk to us",
           style: GoogleFonts.inter(
             color: AppController.floatingTextColor,
-            // color: Colors.green,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
@@ -98,7 +58,6 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
 
     Widget emptyWidget = RichText(
       text: TextSpan(
-        // text: "       ",
         text: "App! ",
         style: GoogleFonts.inter(
           color: Colors.green,
@@ -149,72 +108,16 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
       child: widget.customFloatingWidget ??
           Container(
             padding: EdgeInsets.all(16),
-            // width: (AppController.dataGetConfigValue?.iosIcon == "" && AppController.dataGetConfigValue?.textButton == "") ? 180 : null,
-            // height: (AppController.dataGetConfigValue?.iosIcon == "" && AppController.dataGetConfigValue?.textButton == "") ? 70 : null,
             width: 195,
             height: 70,
             decoration: BoxDecoration(
               color: AppController.floatingButtonColor,
-              // color: Colors.white,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: Colors.grey.shade300,
               ),
             ),
             child: handlerWidget(),
-            // child: (AppController.iconWidget != null)
-            //     // child: AppController.iconWidget.value != null
-            //     ? Row(
-            //         mainAxisSize: MainAxisSize.min,
-            //         children: [
-            //           Image.memory(
-            //             AppController.iconWidget!,
-            //             // AppController.iconWidget.value!,
-            //             // height: 50,
-            //             width: 50,
-            //             fit: BoxFit.cover,
-            //           ),
-            //           SizedBox(width: 10),
-            //           Text(
-            //             AppController.floatingText,
-            //             // "talk to us",
-            //             style: GoogleFonts.inter(
-            //               color: AppController.floatingTextColor,
-            //               // color: Colors.green,
-            //               fontSize: 16,
-            //               fontWeight: FontWeight.w700,
-            //             ),
-            //           )
-            //         ],
-            //       )
-            //     : RichText(
-            //         text: TextSpan(
-            //           text: "App! ",
-            //           style: GoogleFonts.inter(
-            //             color: Colors.green,
-            //             fontSize: 24,
-            //             fontWeight: FontWeight.w700,
-            //           ),
-            //           children: <TextSpan>[
-            //             TextSpan(
-            //               text: "Talk To Us",
-            //               style: GoogleFonts.inter(
-            //                 color: Colors.green,
-            //                 fontSize: 16,
-            //                 fontWeight: FontWeight.w700,
-            //               ),
-            //             )
-            //           ],
-            //         ),
-            //       ),
-            // child: Text(
-            //   "App! Talk To Us",
-            //   style: GoogleFonts.inter(
-            //     color: Colors.green,
-            //     fontSize: 28,
-            //     fontWeight: FontWeight.w700,
-            //   ),
-            // ),
           ),
     );
   }

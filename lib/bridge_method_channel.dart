@@ -11,19 +11,8 @@ import 'package:konnek_native_core/src/support/app_logger.dart';
 
 class BridgeMethodChannel {
   static const MethodChannel _channel = MethodChannel('konnek_native');
-  // static String clientId = "";
-  // static String clientSecret = "";
 
   static Future<void> clientConfigChannel(String data) async {
-    AppLoggerCS.debugLog('[BridgeMethodChannel][AppLoggerCS.debugLog] Data received from native 1: $data');
-    AppLoggerCS.debugLog('[BridgeMethodChannel][AppLoggerCS.debugLog] Data received from native 2: ${jsonEncode(data)}');
-
-    log('[BridgeMethodChannel][log developer] Data received from native 1: $data');
-    log('[BridgeMethodChannel][log developer] Data received from native 2: ${jsonEncode(data)}');
-
-    debugPrint('[BridgeMethodChannel][debugPrint foundation] Data received from native 1: $data');
-    debugPrint('[BridgeMethodChannel][debugPrint foundation] Data received from native 2: ${jsonEncode(data)}');
-
     Map<String, dynamic> mapping = jsonDecode(data);
     InterModule.clientId = mapping['clientId'];
     InterModule.clientSecret = mapping['clientSecret'];
@@ -48,16 +37,12 @@ class BridgeMethodChannel {
         clientConfigChannel(data);
       }
       if (call.method == 'fetchConfigData') {
-        AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] call fetchConfigData");
         final String data = call.arguments;
-        AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] data $data");
         GetConfigResponseModel dataMap = GetConfigResponseModel.fromJson(jsonDecode(data));
-        AppLoggerCS.debugLog("[BridgeMethodChannel][setupHandler] dataMap ${jsonEncode(dataMap)}");
         // InterModule.setupConfig(dataMap.dataGetConfigValue!);
         await AppController().getConfigFromNative(
           dataInput: dataMap.data!,
           onSuccess: (output) {
-            AppLoggerCS.debugLog("[BridgeMethodChannel][getConfigFromNative] onSuccess");
             InterModule.triggerUI.call();
           },
         );
@@ -67,7 +52,6 @@ class BridgeMethodChannel {
 
   static Future<String?> disposeEngine() async {
     try {
-      AppLoggerCS.debugLog("[BridgeMethodChannel][disposeEngine] call from flutter");
       final version = await _channel.invokeMethod<String>(
         'disposeEngine',
       );
@@ -77,18 +61,4 @@ class BridgeMethodChannel {
       return null;
     }
   }
-
-  // static Future<String?> configData(Map<String, dynamic> data) async {
-  //   try {
-  //     AppLoggerCS.debugLog("[BridgeMethodChannel][configData] call from flutter ${jsonEncode(data)}");
-  //     final version = await _channel.invokeMethod<String>(
-  //       'configData',
-  //       data,
-  //     );
-  //     return version;
-  //   } catch (e) {
-  //     AppLoggerCS.debugLog("[BridgeMethodChannel][configData] error $e");
-  //     return null;
-  //   }
-  // }
 }

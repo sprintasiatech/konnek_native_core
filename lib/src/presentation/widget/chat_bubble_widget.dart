@@ -86,7 +86,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                         widget.onChooseBotChat?.call(
                           botPayloadData.body![index],
                           widget.data,
-                          // jsonDecode(widget.data.payload!),
                         );
                       },
                       child: Container(
@@ -114,21 +113,11 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 ),
               ),
               SizedBox(height: 5),
-              // Text(
-              //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-              //   widget.data.text ?? "null",
-              //   textAlign: TextAlign.left,
-              //   style: GoogleFonts.lato(
-              //     fontSize: 14,
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              // ),
             ],
           );
         } else {
           CsatPayloadDataModel csatPayloadData = CsatPayloadDataModel.fromJson(jsonDecode(widget.data.payload!));
           return Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -191,15 +180,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 ),
               ),
               SizedBox(height: 5),
-              // Text(
-              //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-              //   widget.data.text ?? "null",
-              //   textAlign: TextAlign.left,
-              //   style: GoogleFonts.lato(
-              //     fontSize: 14,
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              // ),
             ],
           );
         }
@@ -230,147 +210,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 );
               },
             ),
-            // SizedBox.expand(
-            // StatefulBuilder(builder: (context, setState) {
-            //   int _currentPage = 0;
-            //   PageController _pageController = PageController();
-            //   return Stack(
-            //     children: [
-            //       SizedBox(
-            //         // width: MediaQuery.of(context).size.width * 0.6,
-            //         height: 350,
-            //         child: PageView.builder(
-            //           // child: ListView.separated(
-            //           controller: _pageController,
-            //           // shrinkWrap: true,
-            //           scrollDirection: Axis.horizontal,
-            //           itemCount: (carouselPayloadData.body == null || carouselPayloadData.body!.isEmpty) ? 0 : carouselPayloadData.body!.length,
-            //           itemBuilder: (context, index) {
-            //             return SingleChildScrollView(
-            //               child: Column(
-            //                 children: [
-            //                   ClipRRect(
-            //                     borderRadius: BorderRadius.circular(8.0),
-            //                     child: Image.network(
-            //                       "${carouselPayloadData.body?[index].mediaUrl}",
-            //                       // AppFileHelper.getUrlName(widget.data.payload ?? ""),
-            //                       // AppFileHelper.getUrlName(widget.data.payload ?? ""),
-            //                       height: 200,
-            //                       // width: 100,
-            //                       fit: BoxFit.cover,
-            //                     ),
-            //                   ),
-            //                   SizedBox(height: 10),
-            //                   Text(
-            //                     "${carouselPayloadData.body?[index].title}",
-            //                     textAlign: TextAlign.center,
-            //                     style: GoogleFonts.lato(
-            //                       color: Colors.black87,
-            //                       fontSize: 16,
-            //                       fontWeight: FontWeight.w700,
-            //                     ),
-            //                   ),
-            //                   SizedBox(height: 5),
-            //                   Text(
-            //                     "${carouselPayloadData.body?[index].description}",
-            //                     textAlign: TextAlign.center,
-            //                     style: GoogleFonts.lato(
-            //                       color: Colors.black87,
-            //                       fontSize: 14,
-            //                       fontWeight: FontWeight.w500,
-            //                     ),
-            //                   ),
-            //                   SizedBox(height: 15),
-            //                   InkWell(
-            //                     onTap: () {
-            //                       // AppController.isRoomClosed = false;
-            //                       widget.onChooseCarousel?.call(
-            //                         carouselPayloadData.body![index],
-            //                         widget.data,
-            //                       );
-            //                     },
-            //                     child: Container(
-            //                       padding: EdgeInsets.symmetric(
-            //                         vertical: 6,
-            //                         horizontal: 12,
-            //                       ),
-            //                       height: 40,
-            //                       decoration: BoxDecoration(
-            //                         color: const Color(0xff203080).withOpacity(0.1),
-            //                         borderRadius: BorderRadius.circular(8),
-            //                       ),
-            //                       child: Text(
-            //                         "${carouselPayloadData.body?[index].title}",
-            //                         textAlign: TextAlign.center,
-            //                         style: GoogleFonts.lato(
-            //                           color: Colors.black87,
-            //                           fontSize: 14,
-            //                           fontWeight: FontWeight.w500,
-            //                         ),
-            //                       ),
-            //                     ),
-            //                   ),
-            //                 ],
-            //               ),
-            //             );
-            //           },
-            //           // separatorBuilder: (context, index) {
-            //           //   return SizedBox(width: 10);
-            //           // },
-            //         ),
-            //       ),
-            //       Container(
-            //         // color: Colors.red,
-            //         height: 350,
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           children: [
-            //             InkWell(
-            //               onTap: () {
-            //                 if (_pageController.hasClients) {
-            //                   _pageController.previousPage(
-            //                     duration: const Duration(milliseconds: 400),
-            //                     curve: Curves.easeInOut,
-            //                   );
-            //                 }
-            //               },
-            //               child: Icon(
-            //                 Icons.arrow_circle_left_outlined,
-            //                 size: 50,
-            //                 color: Colors.grey,
-            //               ),
-            //             ),
-            //             InkWell(
-            //               onTap: () {
-            //                 if (_pageController.hasClients) {
-            //                   _pageController.nextPage(
-            //                     duration: const Duration(milliseconds: 400),
-            //                     curve: Curves.easeInOut,
-            //                   );
-            //                 }
-            //               },
-            //               child: Icon(
-            //                 Icons.arrow_circle_right_outlined,
-            //                 size: 50,
-            //                 color: Colors.grey,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   );
-            // }),
             SizedBox(height: 5),
-            // Text(
-            //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-            //   widget.data.text ?? "null",
-            //   textAlign: TextAlign.left,
-            //   style: GoogleFonts.lato(
-            //     fontSize: 14,
-            //     fontWeight: FontWeight.w500,
-            //   ),
-            // ),
           ],
         );
       } else if (widget.data.type == "image" || widget.data.type == "document" || widget.data.type == "sticker" || widget.data.type == "audio" || widget.data.type == "video") {
@@ -381,14 +221,11 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              // crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.network(
-                    // "https://cms.shootingstar.id/74/main.jpg",
-                    // jsonDecode(widget.data.payload ?? "")['url'],
                     AppFileHelper.getUrlName(widget.data.payload ?? ""),
                     height: 100,
                     width: 100,
@@ -397,10 +234,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  // "${widget.data.payload}",
                   AppFileHelper.getFileNameFromUrl(widget.data.payload ?? ""),
                   textAlign: TextAlign.left,
-                  // textAlign: chatCategoryValidation(widget.data) ? TextAlign.right : TextAlign.left,
                   style: GoogleFonts.lato(
                     color: Colors.black45,
                     fontSize: 10,
@@ -409,7 +244,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
                   widget.data.text ?? "null",
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
@@ -425,7 +259,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             width: MediaQuery.of(context).size.width * 0.6,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              // crossAxisAlignment: chatCategoryValidation(widget.data) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
@@ -437,9 +270,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  // "${widget.data.payload}",
                   AppFileHelper.getFileNameFromUrl(widget.data.payload ?? ""),
-                  // textAlign: chatCategoryValidation(widget.data) ? TextAlign.right : TextAlign.left,
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
                     color: Colors.black45,
@@ -449,7 +280,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
                   widget.data.text ?? "null",
                   textAlign: TextAlign.left,
                   style: GoogleFonts.lato(
@@ -463,13 +293,11 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         }
       } else {
         // Type: text
-        // AppLoggerCS.debugLog("Panggil di sini: ${widget.data.text}");
         return SizedBox(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
                 widget.data.text ?? "null",
                 textAlign: TextAlign.left,
                 style: GoogleFonts.lato(
@@ -487,7 +315,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
               widget.data.text ?? "null",
               textAlign: TextAlign.left,
               style: GoogleFonts.lato(
@@ -509,7 +336,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // SizedBox(width: 10),
           Flexible(
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -520,10 +346,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   AppLoggerCS.debugLog("call here");
                   if (widget.data.payload != null || widget.data.payload != "") {
                     if (widget.data.type == "image" || widget.data.type == "document" || widget.data.type == "sticker" || widget.data.type == "audio" || widget.data.type == "video") {
-                      // if ((jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".jpg") || (jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".png")) {
-                      // if (AppImagePickerServiceCS().isImageFile(getUrlName(widget.data.payload ?? ""))) {
                       widget.openImageCallback?.call(jsonDecode(widget.data.payload ?? "")['url']);
-                      // }
                     }
                   }
                 },
@@ -549,13 +372,11 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 child: Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    // color: Colors.purpleAccent.shade200.withOpacity(0.3),
                     color: const Color(0xff2a55a4),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    // crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Flexible(
@@ -567,22 +388,11 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               typeChatHandler(),
-                              // Text(
-                              //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-                              //   widget.data.text ?? "null",
-                              //   textAlign: TextAlign.left,
-                              //   style: GoogleFonts.lato(
-                              //     fontSize: 14,
-                              //     fontWeight: FontWeight.w500,
-                              //   ),
-                              // ),
                               SizedBox(height: 5),
                               IntrinsicWidth(
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    // "15:29",
-                                    // "${DateTime.now().hour}:${DateTime.now().minute}",
                                     DateFormat("hh:mm").format(widget.data.messageTime!.toLocal()),
                                     textAlign: TextAlign.right,
                                     style: GoogleFonts.lato(
@@ -610,16 +420,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               ),
             ),
           ),
-          // SizedBox(width: 10),
-          // Column(
-          //   children: [
-          //     SizedBox(height: 5),
-          //     CircleAvatar(
-          //       backgroundColor: Colors.purpleAccent,
-          //       child: Text("FM"),
-          //     ),
-          //   ],
-          // ),
         ],
       );
     } else {
@@ -627,7 +427,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // SizedBox(width: 10),
           Column(
             children: [
               SizedBox(height: 5),
@@ -636,8 +435,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       borderRadius: BorderRadius.circular(40),
                       child: Image.memory(
                         AppController.dataGetConfigValue!.avatarImageBit!,
-                        // Uri.parse(widget.dataGetConfig!.avatarImage!).data!.contentAsBytes(),
-                        // base64Decode(dataGetConfig!.avatarImage!),
                         height: 50,
                         width: 50,
                         fit: BoxFit.cover,
@@ -653,13 +450,9 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
           Flexible(
             child: InkWell(
               onTap: () {
-                AppLoggerCS.debugLog("call here 2");
                 if (widget.data.payload != null || widget.data.payload != "") {
                   if (widget.data.type == "image" || widget.data.type == "document" || widget.data.type == "sticker" || widget.data.type == "audio" || widget.data.type == "video") {
-                    // if ((jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".jpg") || (jsonDecode(widget.data.payload ?? "")['url'] as String).endsWith(".png")) {
-                    // if (AppImagePickerServiceCS().isImageFile(getUrlName(widget.data.payload ?? ""))) {
                     widget.openImageCallback?.call(jsonDecode(widget.data.payload ?? "")['url']);
-                    // }
                   }
                 }
               },
@@ -685,7 +478,6 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  // color: Colors.purpleAccent.shade200.withOpacity(0.3),
                   color: const Color(0xff203080).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -693,18 +485,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     typeChatHandler(),
-                    // Text(
-                    //   widget.data.text ?? "null",
-                    //   // (index.isEven) ? "Here we go $index" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-                    //   style: GoogleFonts.lato(
-                    //     fontSize: 14,
-                    //     fontWeight: FontWeight.w500,
-                    //   ),
-                    // ),
                     SizedBox(height: 5),
                     Text(
-                      // "15:29",
-                      // "${DateTime.now().hour}:${DateTime.now().minute}",
                       DateFormat("hh:mm").format(widget.data.messageTime!.toLocal()),
                       style: GoogleFonts.lato(
                         color: Colors.black45,

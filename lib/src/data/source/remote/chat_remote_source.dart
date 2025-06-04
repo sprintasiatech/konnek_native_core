@@ -44,10 +44,7 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
         io.Socket socket = AppSocketioService.connect(
           url: baseUrlSocket,
           token: InterModule.accessToken,
-          // token: token ?? "",
         );
-        AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.connected: ${socket.connected}");
-        AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.acks: ${socket.acks}");
         return socket;
       }
     } catch (e) {
