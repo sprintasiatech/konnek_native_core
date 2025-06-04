@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:konnek_native_core/src/support/app_connectivity_service.dart';
-import 'package:konnek_native_core/src/support/app_logger.dart';
 
 enum MethodRequestCS { post, get, put, delete }
 

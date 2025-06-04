@@ -28,11 +28,11 @@ class InterModule {
     WidgetsFlutterBinding.ensureInitialized();
 
     EnvironmentConfig.flavor = Flavor.staging;
-    AppLoggerCS.useLogger = true;
-    AppLoggerCS.useFoundation = true;
+    AppLoggerCS.useLogger = false;
+    AppLoggerCS.useFoundation = false;
     //
-    appApiService.useFoundation = true;
-    appApiService.useLogger = true;
+    appApiService.useFoundation = false;
+    appApiService.useLogger = false;
     //
     await localServiceHive.init();
     await appInfoCS.init();

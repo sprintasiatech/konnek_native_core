@@ -12,7 +12,6 @@ import 'package:konnek_native_core/src/presentation/widget/chat_bubble_widget.da
 import 'package:konnek_native_core/src/presentation/widget/show_image_widget.dart';
 import 'package:konnek_native_core/src/support/app_file_picker.dart';
 import 'package:konnek_native_core/src/support/app_image_picker.dart';
-import 'package:konnek_native_core/src/support/app_logger.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatScreen extends StatefulWidget {

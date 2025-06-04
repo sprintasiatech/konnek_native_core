@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';

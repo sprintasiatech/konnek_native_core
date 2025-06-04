@@ -7,7 +7,6 @@ import 'package:konnek_native_core/inter_module.dart';
 import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
 import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
 import 'package:konnek_native_core/src/presentation/screen/chat_screen.dart';
-import 'package:konnek_native_core/src/support/app_logger.dart';
 import 'package:konnek_native_core/src/support/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
