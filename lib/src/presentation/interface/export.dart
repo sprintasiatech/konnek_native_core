@@ -1,1 +1,1 @@
-// export 'package:flutter_module1/interface/live_chat_sdk.dart';
+// export 'package:konnek_native_core/interface/live_chat_sdk.dart';

@@ -1,9 +1,14 @@
-import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
-import 'package:flutter_module1/src/env.dart';
-import 'package:flutter_module1/src/support/app_socketio_service.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'dart:io';
+
+
+import 'package:dio/dio.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';
+import 'package:konnek_native_core/src/env.dart';
+import 'package:konnek_native_core/src/support/app_api_service.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
+import 'package:konnek_native_core/src/support/app_socketio_service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 abstract class ChatRemoteSource {
   Future<Response?> sendChat({
@@ -22,7 +27,7 @@ abstract class ChatRemoteSource {
   Future<Response?> uploadMedia({
     required Map<String, dynamic> requestData,
   });
-  IO.Socket? startWebSocketIO();
+  io.Socket? startWebSocketIO();
 }
 
 class ChatRemoteSourceImpl extends ChatRemoteSource {
@@ -31,18 +36,15 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
   static AppApiServiceCS apiService = InterModule.appApiService;
 
   @override
-  IO.Socket? startWebSocketIO() {
+  io.Socket? startWebSocketIO() {
     try {
       if (InterModule.accessToken == "") {
         return null;
       } else {
-        IO.Socket socket = AppSocketioService.connect(
+        io.Socket socket = AppSocketioService.connect(
           url: baseUrlSocket,
           token: InterModule.accessToken,
-          // token: token ?? "",
         );
-        AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.connected: ${socket.connected}");
-        AppLoggerCS.debugLog("[ChatRemoteSourceImpl][startWebSocketIO] socket.acks: ${socket.acks}");
         return socket;
       }
     } catch (e) {
@@ -54,7 +56,8 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
   @override
   Future<Response?> getConfig({required String clientId}) async {
     try {
-      String url = "$baseUrl/channel/config/$clientId/web";
+      String url = "$baseUrl/channel/config/$clientId/${checkPlatform()}";
+      // String url = "$baseUrl/channel/config/$clientId/web";
       Response? response = await apiService.call(
         url,
         method: MethodRequestCS.get,
@@ -94,7 +97,8 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
     required SendChatRequestModel request,
   }) async {
     try {
-      String url = "$baseUrl/webhook/widget/$clientId";
+      String url = "$baseUrl/webhook/${checkPlatform()}/$clientId";
+      // String url = "$baseUrl/webhook/widget/$clientId";
       Response? response = await apiService.call(
         url,
         request: request.toJson(),
@@ -128,5 +132,18 @@ class ChatRemoteSourceImpl extends ChatRemoteSource {
     } catch (e) {
       rethrow;
     }
+  }
+
+  String checkPlatform() {
+    String platform = "webhook";
+    if (Platform.isAndroid) {
+      platform = "android";
+    } else if (Platform.isIOS) {
+      platform = "ios";
+    } else {
+      platform = "web";
+    }
+    AppLoggerCS.debugLog("[checkPlatform]: $platform");
+    return platform;
   }
 }

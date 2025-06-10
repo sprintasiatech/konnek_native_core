@@ -1,14 +1,14 @@
-import 'dart:convert';
-
-import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/src/data/models/request/send_chat_request_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/get_conversation_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/send_chat_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/upload_media_response_model.dart';
-import 'package:flutter_module1/src/data/source/remote/chat_remote_source.dart';
-import 'package:flutter_module1/src/domain/repository/chat_repository.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
+import 'package:konnek_native_core/src/data/models/request/send_chat_request_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/get_conversation_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/send_chat_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/upload_media_response_model.dart';
+import 'package:konnek_native_core/src/data/source/remote/chat_remote_source.dart';
+import 'package:konnek_native_core/src/domain/repository/chat_repository.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:uuid/uuid.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
@@ -18,9 +18,9 @@ class ChatRepositoryImpl extends ChatRepository {
   static ChatRemoteSource remoteSource = ChatRemoteSourceImpl();
 
   @override
-  IO.Socket? startWebSocketIO() {
+  io.Socket? startWebSocketIO() {
     try {
-      IO.Socket? socket = remoteSource.startWebSocketIO();
+      io.Socket? socket = remoteSource.startWebSocketIO();
       return socket;
     } catch (e) {
       AppLoggerCS.debugLog("[ChatRepositoryImpl][startWebSocketIO] error: $e");
@@ -56,14 +56,14 @@ class ChatRepositoryImpl extends ChatRepository {
     required int limit,
     required String roomId,
     required int currentPage,
-    required String sesionId,
+    required String sessionId,
   }) async {
     try {
       Response? response = await remoteSource.getConversation(
         limit: limit,
         roomId: roomId,
         currentPage: currentPage,
-        sesionId: sesionId,
+        sesionId: sessionId,
       );
       if (response == null) {
         return null;
@@ -108,23 +108,15 @@ class ChatRepositoryImpl extends ChatRepository {
         );
       }
 
-      // String timeFormat = "2025-04-15T08:10:19.992Z";
       String date1 = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      AppLoggerCS.debugLog("date1: $date1");
       String time1 = DateFormat("hh:mm:ss.").format(DateTime.now());
-      AppLoggerCS.debugLog("time1: $time1");
       String concatDateTime = "${date1}T${time1}992Z";
-      AppLoggerCS.debugLog("concatDateTime: $concatDateTime");
 
       requestData.addAll(
         {
-          // "time": DateTime.now().toLocal(),
           "time": concatDateTime,
-          // "time": DateTime.now().toUtc(),
         },
       );
-
-      // AppLoggerCS.debugLog("[uploadMedia] requestData: ${jsonEncode(requestData)}");
 
       Response? response = await remoteSource.uploadMedia(
         requestData: requestData,
@@ -135,7 +127,6 @@ class ChatRepositoryImpl extends ChatRepository {
       if (response.data == null) {
         return null;
       }
-      AppLoggerCS.debugLog("[uploadMedia] response.data: ${jsonEncode(response.data)}");
 
       UploadFilesResponseModel mapping = UploadFilesResponseModel.fromJson(
         response.data,
@@ -162,7 +153,6 @@ class ChatRepositoryImpl extends ChatRepository {
       if (response.data == null) {
         return null;
       }
-      // AppLoggerCS.debugLog("[ChatRepositoryImpl][sendChat] response.data: ${jsonEncode(response.data)}");
       SendChatResponseModel mapping = SendChatResponseModel.fromJson(
         response.data,
       );

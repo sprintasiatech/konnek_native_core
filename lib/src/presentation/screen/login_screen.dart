@@ -1,13 +1,21 @@
-import 'package:fam_coding_supply/fam_coding_supply.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_module1/assets/assets.dart';
-import 'package:flutter_module1/src/data/source/local/chat_local_source.dart';
-import 'package:flutter_module1/src/presentation/controller/app_controller.dart';
-import 'package:flutter_module1/src/presentation/screen/chat_screen.dart';
-import 'package:flutter_module1/src/support/string_extension.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:konnek_native_core/assets/assets.dart';
+import 'package:konnek_native_core/bridge_method_channel.dart';
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/source/local/chat_local_source.dart';
+import 'package:konnek_native_core/src/presentation/controller/app_controller.dart';
+import 'package:konnek_native_core/src/presentation/screen/chat_screen.dart';
+import 'package:konnek_native_core/src/support/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final void Function()? callback;
+
+  const LoginScreen({
+    super.key,
+    this.callback,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -20,39 +28,33 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // nameController.text = "test";
-    // emailController.text = "test@test.com";
 
-    // nameController.text = "test1";
-    // emailController.text = "test1@test.com";
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      InterModule.triggerUI = () {
+        setState(() {});
+      };
+    });
+  }
 
-    Future.delayed(
-      Duration(milliseconds: 250),
-      () {
-        // WidgetsBinding.instance.ensureVisualUpdate();
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          await AppController().getConfig(
-            onSuccess: () async {
-              // AppLoggerCS.debugLog("[getConfig] success");
-              setState(() {});
-            },
-            onFailed: (errorMessage) {
-              // AppLoggerCS.debugLog("[getConfig] onFailed $errorMessage");
-              setState(() {});
-            },
-          );
-        });
-      },
-    );
+  String nameErrorText = "";
+  void _validateName(String name) {
+    if (name.isEmpty) {
+      setState(() => nameErrorText = 'Name is required');
+    } else if (!name.isValidName) {
+      setState(() => nameErrorText = 'Enter a valid name');
+    } else {
+      setState(() => nameErrorText = "");
+    }
   }
 
   String errorText = "";
-
   void _validateEmail(String email) {
     if (email.isEmpty) {
       setState(() => errorText = 'Email is required');
     } else if (!email.isValidEmail) {
       setState(() => errorText = 'Enter a valid email');
+    } else if (!email.isAllLowercaseEmail) {
+      setState(() => errorText = 'Only lowercase accepted');
     } else {
       setState(() => errorText = "");
     }
@@ -62,8 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
-        AppLoggerCS.debugLog("didPop: $didPop");
-        AppLoggerCS.debugLog("result: $result");
+        // AppLoggerCS.debugLog("didPop: $didPop");
+        // AppLoggerCS.debugLog("result: $result");
+        BridgeMethodChannel.disposeEngine();
+        SystemNavigator.pop(animated: true);
       },
       child: GestureDetector(
         onTap: () {
@@ -73,6 +77,16 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.white,
+            leading: InkWell(
+              onTap: () {
+                BridgeMethodChannel.disposeEngine();
+                SystemNavigator.pop();
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 24,
+              ),
+            ),
           ),
           body: SingleChildScrollView(
             child: Container(
@@ -136,6 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 45,
                     child: TextField(
+                      onChanged: (value) {
+                        _validateName(value);
+                      },
                       style: GoogleFonts.lato(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -164,6 +181,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  if (nameErrorText != "")
+                    Text(
+                      nameErrorText,
+                      style: GoogleFonts.lato(
+                        color: Colors.red,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   SizedBox(height: 15),
                   Text(
                     "Email",
@@ -228,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           boxShadow: [
                             BoxShadow(
                               offset: Offset(2, 2),
-                              color: Colors.lightBlue.shade100.withOpacity(0.5),
+                              color: Colors.lightBlue.shade100.withValues(alpha: 0.5),
                               blurRadius: 2,
                               spreadRadius: 1,
                             ),
@@ -246,19 +272,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       onTap: () async {
-                        if (errorText != "") {
+                        if (errorText != "" || nameErrorText != "") {
                           //
                         } else if (nameController.text.isEmpty || emailController.text.isEmpty) {
-                          errorText = "field is empty";
+                          errorText = "email field is empty";
+                          nameErrorText = "name field is empty";
                         } else {
                           errorText = "";
+                          nameErrorText = "";
                           await AppController()
                               .loadData(
                             name: nameController.text,
                             email: emailController.text,
                           )
                               .then((value) {
+                            AppController.isWebSocketStart = false;
                             Navigator.push(
+                              // ignore: use_build_context_synchronously
                               context,
                               MaterialPageRoute(
                                 builder: (context) {

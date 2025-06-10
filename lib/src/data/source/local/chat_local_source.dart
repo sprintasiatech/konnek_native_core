@@ -1,9 +1,11 @@
 import 'dart:convert';
 
-import 'package:fam_coding_supply/fam_coding_supply.dart';
-import 'package:flutter_module1/inter_module.dart';
-import 'package:flutter_module1/src/data/models/response/get_config_response_model.dart';
-import 'package:flutter_module1/src/data/models/response/send_chat_response_model.dart';
+
+import 'package:konnek_native_core/inter_module.dart';
+import 'package:konnek_native_core/src/data/models/response/get_config_response_model.dart';
+import 'package:konnek_native_core/src/data/models/response/send_chat_response_model.dart';
+import 'package:konnek_native_core/src/support/app_logger.dart';
+import 'package:konnek_native_core/src/support/local_service_hive.dart';
 
 class LocalKey {
   static const String accessToken = "accessToken";
@@ -17,7 +19,7 @@ class ChatLocalSource {
   // final LocalServiceHive localServiceHive;
   // ChatLocalSource(this.localServiceHive);
 
-  static LocalServiceHive localServiceHive = InterModule.famCodingSupply.localServiceHive;
+  static LocalServiceHive localServiceHive = InterModule.localServiceHive;
 
   Future<void> setSocketReady(bool value) async {
     try {
@@ -50,9 +52,9 @@ class ChatLocalSource {
   Future<void> setConfigData(DataGetConfig value) async {
     try {
       String data = jsonEncode(value.toJson());
-      await localServiceHive.user.putSecure(
-        key: LocalKey.configData,
-        data: data,
+      await localServiceHive.user.put(
+        LocalKey.configData,
+        data,
       );
     } catch (e) {
       AppLoggerCS.debugLog("[setConfigData] error: $e");
@@ -62,8 +64,8 @@ class ChatLocalSource {
 
   Future<DataGetConfig?> getConfigData() async {
     try {
-      String? value = await localServiceHive.user.getSecure(
-        key: LocalKey.configData,
+      String? value = await localServiceHive.user.get(
+        LocalKey.configData,
       );
       if (value != null) {
         Map<String, dynamic> formatMap = jsonDecode(value);

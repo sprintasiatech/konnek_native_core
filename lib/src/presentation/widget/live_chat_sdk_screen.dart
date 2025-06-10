@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_module1/src/presentation/interface/live_chat_sdk.dart';
+import 'package:konnek_native_core/src/presentation/interface/live_chat_sdk.dart';
 
 class LiveChatSdkScreen extends StatefulWidget {
   final Widget child;
@@ -22,9 +22,28 @@ class LiveChatSdkScreen extends StatefulWidget {
 }
 
 class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
-  Offset position = Offset(70, -40);
+  Offset position = Offset(90, -30);
+  Size? screenSize;
 
   final LiveChatSdk liveChatSdk = LiveChatSdk();
+
+  void handlePositionFloating() {
+    screenSize = MediaQuery.of(context).size;
+    if (screenSize != null) {
+      position = Offset(screenSize!.width - 80, screenSize!.height - 160); // 80 = button size + margin
+    } else {
+      position = Offset(90, -30);
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // handlePositionFloating();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
