@@ -561,6 +561,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                           if (AppController.isRoomClosed == RoomCloseState.close) {
                                             InterModule.accessToken = "";
                                             AppController.isRoomClosed = RoomCloseState.open;
+                                            AppController.isAnyCompletionMessage = false;
                                           } else {
                                             AppController.isRoomClosed = RoomCloseState.close;
                                           }
