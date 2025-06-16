@@ -45,6 +45,11 @@ class AppController {
 
   static bool socketReady = false;
 
+  static void open() {
+    isWebSocketStart = false;
+    isAnyCompletionMessage = false;
+  }
+
   static void clear() {
     nameUser = "";
     usernameUser = "";
@@ -54,6 +59,7 @@ class AppController {
     conversationList = [];
     conversationDataFirstChat = null;
     conversationListFirstChat = [];
+    isAnyCompletionMessage = false;
     InterModule.accessToken = "";
   }
 
@@ -131,6 +137,7 @@ class AppController {
   static bool isCSATOpen = false;
   // static bool isRoomClosed = false;
   static RoomCloseState isRoomClosed = RoomCloseState.open;
+  static bool isAnyCompletionMessage = false;
 
   Future<void> handleWebSocketIO({
     void Function(String errorMessage)? onFailed,
@@ -431,7 +438,7 @@ class AppController {
         text: postbackDataChosen.title,
         type: "postback",
         messageId: uuid,
-        status: isRoomClosed == RoomCloseState.closeWaiting ? 2 : 0,
+        status: 2,
         messageTime: currentDateValue.toUtc(),
       );
       conversationList.add(chatModel);
