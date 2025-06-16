@@ -286,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             email: emailController.text,
                           )
                               .then((value) {
-                            AppController.isWebSocketStart = false;
+                            AppController.open();
                             Navigator.push(
                               // ignore: use_build_context_synchronously
                               context,
