@@ -249,6 +249,12 @@ class AppController {
         // AppLoggerCS.debugLog("[socket][csat] output: ${jsonEncode(output)}");
         SocketChatResponseModel socket = SocketChatResponseModel.fromJson(output);
 
+        if (socket.csat != null) {
+          if (socket.csat == true && socket.message?.interactive == null) {
+            isAnyCompletionMessage = true;
+          }
+        }
+
         sessionId = socket.session!.id!;
         roomId = socket.session!.roomId!;
 
