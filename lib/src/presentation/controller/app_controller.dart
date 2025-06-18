@@ -287,6 +287,7 @@ class AppController {
         );
         conversationList.add(chatModel);
 
+        conversationList = removeDuplicatesById(conversationList);
         onSocketCSATCalled.call();
       });
 
