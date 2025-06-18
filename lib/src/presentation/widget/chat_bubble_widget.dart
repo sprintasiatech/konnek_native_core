@@ -92,7 +92,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                         padding: EdgeInsets.all(6),
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xff203080).withValues(alpha: 0.1),
+                          // color: const Color(0xff203080).withValues(alpha: 0.1),
+                          color: const Color(0xff203080).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -157,7 +158,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                             padding: EdgeInsets.all(6),
                             height: 40,
                             decoration: BoxDecoration(
-                              color: const Color(0xff203080).withValues(alpha: 0.1),
+                              // color: const Color(0xff203080).withValues(alpha: 0.1),
+                              color: const Color(0xff203080).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -478,7 +480,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xff203080).withValues(alpha: 0.2),
+                  // color: const Color(0xff203080).withValues(alpha: 0.2),
+                  color: const Color(0xff203080).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(

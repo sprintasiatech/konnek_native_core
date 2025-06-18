@@ -86,7 +86,8 @@ class _CarouselChatBubbleWidgetState extends State<CarouselChatBubbleWidget> {
                         ),
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xff203080).withValues(alpha: 0.1),
+                          // color: const Color(0xff203080).withValues(alpha: 0.1),
+                          color: const Color(0xff203080).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
