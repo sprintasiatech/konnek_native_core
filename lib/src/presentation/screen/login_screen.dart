@@ -64,8 +64,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
-        // AppLoggerCS.debugLog("didPop: $didPop");
-        // AppLoggerCS.debugLog("result: $result");
+        nameController.clear();
+        emailController.clear();
+        // 
         BridgeMethodChannel.disposeEngine();
         SystemNavigator.pop(animated: true);
       },
@@ -79,6 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
             backgroundColor: Colors.white,
             leading: InkWell(
               onTap: () {
+                nameController.clear();
+                emailController.clear();
+                // 
                 BridgeMethodChannel.disposeEngine();
                 SystemNavigator.pop();
               },
