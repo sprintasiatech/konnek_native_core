@@ -816,20 +816,41 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void textFieldInputAction() {
     if (AppController.isCSATOpen) {
-      AppController().emitCsatText(
-        text: textController.text,
-        onSent: () {
-          _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
-          if (mounted) {
+      if (uploadFile != null) {
+        AppController().uploadMedia(
+          text: textController.text,
+          mediaData: uploadFile!,
+          onLoading: (bool loadingIndicator) {
+            setState(() {
+              isLoading = loadingIndicator;
+            });
+          },
+          onSuccess: () {
+            uploadFile = null;
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
             setState(() {});
-          }
-        },
-        onFailed: () async {
-          AppController.clear();
-          ChatLocalSource.localServiceHive.user.clear();
-          Navigator.pop(context);
-        },
-      );
+          },
+          onFailed: (errorMessage) {
+            uploadFile = null;
+            setState(() {});
+          },
+        );
+      } else {
+        AppController().emitCsatText(
+          text: textController.text,
+          onSent: () {
+            _chatItems = ChatController.buildChatListWithSeparators(AppController.conversationList);
+            if (mounted) {
+              setState(() {});
+            }
+          },
+          onFailed: () async {
+            AppController.clear();
+            ChatLocalSource.localServiceHive.user.clear();
+            Navigator.pop(context);
+          },
+        );
+      }
     } else {
       if (uploadFile != null) {
         AppController().uploadMedia(
