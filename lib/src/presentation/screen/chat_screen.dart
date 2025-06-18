@@ -417,7 +417,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                         height: 50,
                                         width: 50,
                                         child: CircleAvatar(
-                                          backgroundColor: const Color(0xff2a55a4).withValues(alpha: 0.6),
+                                          // backgroundColor: const Color(0xff2a55a4).withValues(alpha: 0.6),
+                                          backgroundColor: const Color(0xff2a55a4).withOpacity(0.6),
                                           child: Icon(
                                             Icons.keyboard_arrow_down_outlined,
                                             size: 35,

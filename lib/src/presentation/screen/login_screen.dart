@@ -254,7 +254,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           boxShadow: [
                             BoxShadow(
                               offset: Offset(2, 2),
-                              color: Colors.lightBlue.shade100.withValues(alpha: 0.5),
+                              // color: Colors.lightBlue.shade100.withValues(alpha: 0.5),
+                              color: Colors.lightBlue.shade100.withOpacity(0.5),
                               blurRadius: 2,
                               spreadRadius: 1,
                             ),
