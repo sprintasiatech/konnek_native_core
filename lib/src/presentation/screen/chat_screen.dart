@@ -682,6 +682,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                           InkWell(
                                             onTap: () async {
                                               uploadFile = await AppFilePickerServiceCS().pickFiles(
+                                                fileMaxSize: 30,
+                                                onFailed: (errorMessage) {
+                                                  toastFailedUploadMedia("not allowed more than 30mb");
+                                                },
                                                 onFileName: (fileNameValue) {
                                                   fileName = fileNameValue;
                                                 },
@@ -814,6 +818,25 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void toastFailedUploadMedia(String errorMessage) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(
+      SnackBar(
+        duration: const Duration(milliseconds: 1500),
+        backgroundColor: Colors.red.shade500,
+        content: Text(
+          errorMessage,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
   void textFieldInputAction() {
     if (AppController.isCSATOpen) {
       if (uploadFile != null) {
@@ -832,6 +855,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           onFailed: (errorMessage) {
             uploadFile = null;
+            toastFailedUploadMedia(errorMessage);
             setState(() {});
           },
         );
@@ -868,6 +892,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           onFailed: (errorMessage) {
             uploadFile = null;
+            toastFailedUploadMedia(errorMessage);
             setState(() {});
           },
         );
