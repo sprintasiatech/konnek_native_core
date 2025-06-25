@@ -25,7 +25,7 @@ class AppFilePickerServiceCS {
           return fileFormat;
         } else {
           if (sizeFile > fileMaxSize) {
-            onFailed?.call("file exceeds limit, not allowed more than ${sizeFile}MB");
+            onFailed?.call("file exceeds limit, not allowed more than $fileMaxSize MB");
             return null;
           } else {
             onSizeFile?.call(sizeFile);
