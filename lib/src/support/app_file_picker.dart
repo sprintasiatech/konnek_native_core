@@ -12,7 +12,9 @@ class AppFilePickerServiceCS {
     void Function(String errorMessage)? onFailed,
   }) async {
     try {
+      AppLoggerCS.debugLog("[pickFiles]: run");
       FilePickerResult? result = await FilePicker.platform.pickFiles();
+      AppLoggerCS.debugLog("[pickFiles] result: $result");
       if (result != null) {
         File fileFormat = File(result.files.single.path!);
 
@@ -21,18 +23,22 @@ class AppFilePickerServiceCS {
 
         double sizeFile = await calculateSizeWithValue(fileFormat);
         if (fileMaxSize == null) {
+          AppLoggerCS.debugLog("[pickFiles] result fileMaxSize");
           onSizeFile?.call(sizeFile);
           return fileFormat;
         } else {
           if (sizeFile > fileMaxSize) {
+            AppLoggerCS.debugLog("[pickFiles] result sizeFile > fileMaxSize");
             onFailed?.call("file exceeds limit, not allowed more than $fileMaxSize MB");
             return null;
           } else {
+            AppLoggerCS.debugLog("[pickFiles] result sizeFile < fileMaxSize");
             onSizeFile?.call(sizeFile);
             return fileFormat;
           }
         }
       } else {
+        AppLoggerCS.debugLog("[pickFiles] result null: $result");
         return null;
       }
     } catch (e) {
