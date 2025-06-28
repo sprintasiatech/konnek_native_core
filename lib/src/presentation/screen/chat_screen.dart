@@ -117,7 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
           if (mounted) {
             setState(() {});
           }
-          Future.delayed(Duration(milliseconds: 700), () {
+          Future.delayed(Duration(milliseconds: 1000), () {
             AppController.clearRoomClosed();
             AppController.disconnectSocket();
           });
