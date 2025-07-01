@@ -86,14 +86,11 @@ class ChatRepositoryImpl extends ChatRepository {
     String? mediaData,
   }) async {
     try {
-      AppLoggerCS.debugLog("[uploadMedia]: run");
       MultipartFile media = await MultipartFile.fromFile(
         '$mediaData',
         filename: mediaData.toString().split('/').last,
         // contentType: MediaType('image', 'jpg'),
       );
-
-      AppLoggerCS.debugLog("[uploadMedia] MultipartFile.fromFile: $media");
 
       String uuid = const Uuid().v4();
 
@@ -124,23 +121,19 @@ class ChatRepositoryImpl extends ChatRepository {
       Response? response = await remoteSource.uploadMedia(
         requestData: requestData,
       );
-      AppLoggerCS.debugLog("[uploadMedia] Response: $response");
       if (response == null) {
-        AppLoggerCS.debugLog("[uploadMedia] response == null");
         return null;
       }
       if (response.data == null) {
-        AppLoggerCS.debugLog("[uploadMedia] response.data == null");
         return null;
       }
 
       UploadFilesResponseModel mapping = UploadFilesResponseModel.fromJson(
         response.data,
       );
-      AppLoggerCS.debugLog("[uploadMedia] mapping: $mapping");
       return mapping;
     } catch (e) {
-      AppLoggerCS.debugLog("[uploadMedia] e: $e");
+      AppLoggerCS.debugLog("[ChatRepositoryImpl][uploadMedia] e: $e");
       rethrow;
     }
   }

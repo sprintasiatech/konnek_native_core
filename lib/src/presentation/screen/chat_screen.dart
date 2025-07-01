@@ -685,23 +685,17 @@ class _ChatScreenState extends State<ChatScreen> {
                                               uploadFile = await AppFilePickerServiceCS().pickFiles(
                                                 fileMaxSize: 30,
                                                 onFailed: (errorMessage) {
-                                                  AppLoggerCS.debugLog("[ChatScreen] onFailed: $errorMessage");
                                                   toastFailedUploadMedia(errorMessage);
                                                 },
                                                 onFileName: (fileNameValue) {
-                                                  AppLoggerCS.debugLog("[ChatScreen] onFileName: $fileNameValue");
                                                   fileName = fileNameValue;
                                                 },
                                                 onSizeFile: (sizeFileValue) {
-                                                  AppLoggerCS.debugLog("[ChatScreen] onSizeFile: $sizeFileValue");
                                                   fileSize = sizeFileValue;
                                                 },
                                               );
-                                              AppLoggerCS.debugLog("[ChatScreen] uploadFile: $uploadFile");
                                               buttonValidation();
-                                              AppLoggerCS.debugLog("[ChatScreen] uploadFile buttonValidation()");
                                               setState(() {});
-                                              AppLoggerCS.debugLog("[ChatScreen] uploadFile setState(() {})");
                                             },
                                             child: Container(
                                               padding: EdgeInsets.all(12),
