@@ -339,7 +339,8 @@ class AppController {
       "reply_id": null,
       "ttl": 5,
       "time": currentDateValue.toUtc().toIso8601String(),
-      "type": botDataChosen.type,
+      "type": "postback",
+      // "type": botDataChosen.type,
       "text": botDataChosen.title,
       "postback": botDataChosen.toJson(),
       "channel_code": checkPlatform(),
@@ -353,15 +354,15 @@ class AppController {
       dataEmit,
     );
 
-    // ConversationList? chatModel = ConversationList(
-    //   fromType: "1",
-    //   text: botDataChosen.title,
-    //   type: "postback",
-    //   messageId: uuid,
-    //   status: 2,
-    //   messageTime: currentDateValue.toUtc(),
-    // );
-    // conversationList.add(chatModel);
+    ConversationList? chatModel = ConversationList(
+      fromType: "1",
+      text: botDataChosen.title,
+      type: "postback",
+      messageId: uuid,
+      status: 2,
+      messageTime: currentDateValue.toUtc(),
+    );
+    conversationList.add(chatModel);
     onSent?.call();
   }
 

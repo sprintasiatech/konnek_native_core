@@ -75,7 +75,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               ),
               SizedBox(height: 5),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.6,
+                // width: MediaQuery.of(context).size.width * 0.6,
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: (botPayloadData.body == null || botPayloadData.body!.isEmpty) ? 0 : botPayloadData.body!.length,
@@ -435,16 +435,21 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               (widget.dataGetConfig != null)
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(40),
-                      child: Image.memory(
-                        AppController.dataGetConfigValue!.avatarImageBit!,
-                        height: 50,
-                        width: 50,
-                        fit: BoxFit.cover,
-                      ),
+                      child: (AppController.dataGetConfigValue!.avatarImageBit != null)
+                          ? Image.memory(
+                              AppController.dataGetConfigValue!.avatarImageBit!,
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              child: Text("KN"),
+                            ),
                     )
                   : CircleAvatar(
-                      backgroundColor: Colors.purpleAccent,
-                      child: Text("SZ"),
+                      backgroundColor: Colors.grey,
+                      child: Text("KN"),
                     ),
             ],
           ),
