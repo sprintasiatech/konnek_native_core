@@ -200,14 +200,19 @@ class _ChatScreenState extends State<ChatScreen> {
                         child: (AppController.dataGetConfigValue != null)
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(40),
-                                child: Image.memory(
-                                  AppController.dataGetConfigValue!.avatarImageBit!,
-                                  // Uri.parse(AppController.dataGetConfigValue!.avatarImage!).data!.contentAsBytes(),
-                                  // base64Decode(dataGetConfig!.avatarImage!),
-                                  height: 50,
-                                  width: 50,
-                                  fit: BoxFit.cover,
-                                ),
+                                child: (AppController.dataGetConfigValue!.avatarImageBit != null)
+                                    ? Image.memory(
+                                        AppController.dataGetConfigValue!.avatarImageBit!,
+                                        // Uri.parse(AppController.dataGetConfigValue!.avatarImage!).data!.contentAsBytes(),
+                                        // base64Decode(dataGetConfig!.avatarImage!),
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor: Colors.grey,
+                                      ),
                               )
                             : Text(
                                 "App!",
@@ -220,7 +225,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       centerTitle: false,
                       title: Text(
-                        (AppController.dataGetConfigValue != null) ? "${AppController.dataGetConfigValue?.avatarName}" : "Cust Service",
+                        (AppController.dataGetConfigValue != null)
+                            ? (AppController.dataGetConfigValue?.avatarName != null)
+                                ? "${AppController.dataGetConfigValue?.avatarName}"
+                                : "Cust Service"
+                            : "Cust Service",
                         style: GoogleFonts.inter(
                           color: AppController.headerTextColor,
                           // color: Colors.green,
