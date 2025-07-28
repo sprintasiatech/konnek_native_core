@@ -72,7 +72,7 @@ class AppController {
   static void clearRoomClosed() {
     currentPage = 1;
     limit = 20;
-    InterModule.accessToken = "";
+    // InterModule.accessToken = "";
   }
 
   Future<void> startWebSocketIO({
