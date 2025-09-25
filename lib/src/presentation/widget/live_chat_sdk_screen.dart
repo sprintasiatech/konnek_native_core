@@ -22,26 +22,31 @@ class LiveChatSdkScreen extends StatefulWidget {
 }
 
 class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
-  Offset position = Offset(90, -30);
+  Offset position = const Offset(0, 0); // Initial dummy offset; will be set properly post-build
   Size? screenSize;
+  Size floatingWidgetSize = Size.zero; // To store measured size
+  final GlobalKey _floatingKey = GlobalKey(); // Key to measure the floating widget
 
   final LiveChatSdk liveChatSdk = LiveChatSdk();
 
-  void handlePositionFloating() {
-    screenSize = MediaQuery.of(context).size;
-    if (screenSize != null) {
-      position = Offset(screenSize!.width - 80, screenSize!.height - 160); // 80 = button size + margin
-    } else {
-      position = Offset(90, -30);
+  void setInitialPosition() {
+    final RenderBox? renderBox = _floatingKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null && screenSize != null) {
+      floatingWidgetSize = renderBox.size;
+      position = Offset(
+        screenSize!.width - floatingWidgetSize.width - 15,
+        screenSize!.height - floatingWidgetSize.height - 15,
+      );
+      setState(() {});
     }
-    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // handlePositionFloating();
+      screenSize = MediaQuery.of(context).size;
+      setInitialPosition();
     });
   }
 
@@ -50,24 +55,22 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Your main UI here
           widget.child,
-
-          // Draggable floating widget
-          Align(
-            alignment: Alignment.bottomCenter,
-            // left: position.dx,
-            // top: position.dy,
-            child: Transform.translate(
-              offset: position,
-              child: GestureDetector(
-                onPanUpdate: (details) {
-                  setState(() {
-                    position += details.delta;
-                  });
-                },
-                // child: widget.draggableWidget,
-                // child: widget.draggableWidget.entryPointWidget(),
+          Positioned(
+            left: position.dx,
+            top: position.dy,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                setState(() {
+                  position += details.delta;
+                  position = Offset(
+                    position.dx.clamp(0.0, (screenSize?.width ?? 0) - floatingWidgetSize.width),
+                    position.dy.clamp(0.0, (screenSize?.height ?? 0) - floatingWidgetSize.height),
+                  );
+                });
+              },
+              child: Container(
+                key: _floatingKey, 
                 child: liveChatSdk.entryPointWidget(
                   customFloatingWidget: widget.customFloatingWidget,
                 ),
