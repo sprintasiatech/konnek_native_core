@@ -112,7 +112,6 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
       child: widget.customFloatingWidget ??
           Container(
             padding: EdgeInsets.all(16),
-            width: 300,
             height: 70,
             decoration: BoxDecoration(
               color: AppController.floatingButtonColor,
@@ -121,7 +120,13 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
                 color: Colors.grey.shade300,
               ),
             ),
-            child: handlerWidget(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 195,
+                maxWidth: 300,
+              ),
+              child: handlerWidget(),
+            ),
           ),
     );
   }

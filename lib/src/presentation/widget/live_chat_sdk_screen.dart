@@ -22,22 +22,37 @@ class LiveChatSdkScreen extends StatefulWidget {
 }
 
 class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
-  Offset position = const Offset(0, 0); // Initial dummy offset; will be set properly post-build
+  Offset position = const Offset(0, 0);
   Size? screenSize;
-  Size floatingWidgetSize = Size.zero; // To store measured size
-  final GlobalKey _floatingKey = GlobalKey(); // Key to measure the floating widget
+  Size floatingWidgetSize = Size.zero;
+  final GlobalKey _floatingKey = GlobalKey();
 
   final LiveChatSdk liveChatSdk = LiveChatSdk();
+
+  bool userDragged = false;
 
   void setInitialPosition() {
     final RenderBox? renderBox = _floatingKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox != null && screenSize != null) {
-      floatingWidgetSize = renderBox.size;
-      position = Offset(
-        screenSize!.width - floatingWidgetSize.width - 15,
-        screenSize!.height - floatingWidgetSize.height - 15,
-      );
-      setState(() {});
+      final newSize = renderBox.size;
+
+      if (!userDragged) {
+        floatingWidgetSize = newSize;
+        final newPosition = Offset(
+          screenSize!.width - floatingWidgetSize.width - 15,
+          screenSize!.height - floatingWidgetSize.height - 15,
+        );
+
+        if (position != newPosition) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && !userDragged) {
+              setState(() {
+                position = newPosition;
+              });
+            }
+          });
+        }
+      }
     }
   }
 
@@ -62,6 +77,7 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
             child: GestureDetector(
               onPanUpdate: (details) {
                 setState(() {
+                  userDragged = true; // stop auto-adjusting
                   position += details.delta;
                   position = Offset(
                     position.dx.clamp(0.0, (screenSize?.width ?? 0) - floatingWidgetSize.width),
@@ -69,10 +85,18 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
                   );
                 });
               },
-              child: Container(
-                key: _floatingKey, 
-                child: liveChatSdk.entryPointWidget(
-                  customFloatingWidget: widget.customFloatingWidget,
+              child: NotificationListener<SizeChangedLayoutNotification>(
+                onNotification: (_) {
+                  setInitialPosition();
+                  return true;
+                },
+                child: SizeChangedLayoutNotifier(
+                  child: Container(
+                    key: _floatingKey,
+                    child: liveChatSdk.entryPointWidget(
+                      customFloatingWidget: widget.customFloatingWidget,
+                    ),
+                  ),
                 ),
               ),
             ),
