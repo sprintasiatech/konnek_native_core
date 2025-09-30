@@ -232,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: GoogleFonts.inter(
                           color: AppController.headerTextColor,
                           // color: Colors.green,
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

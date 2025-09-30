@@ -40,7 +40,7 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
         floatingWidgetSize = newSize;
         final newPosition = Offset(
           screenSize!.width - floatingWidgetSize.width - 15,
-          screenSize!.height - floatingWidgetSize.height - 15,
+          screenSize!.height - floatingWidgetSize.height - 55,
         );
 
         if (position != newPosition) {
@@ -66,42 +66,61 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      screenSize = MediaQuery.of(context).size;
+      setInitialPosition();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          widget.child,
-          Positioned(
-            left: position.dx,
-            top: position.dy,
-            child: GestureDetector(
-              onPanUpdate: (details) {
-                setState(() {
-                  userDragged = true; // stop auto-adjusting
-                  position += details.delta;
-                  position = Offset(
-                    position.dx.clamp(0.0, (screenSize?.width ?? 0) - floatingWidgetSize.width),
-                    position.dy.clamp(0.0, (screenSize?.height ?? 0) - floatingWidgetSize.height),
-                  );
-                });
-              },
-              child: NotificationListener<SizeChangedLayoutNotification>(
-                onNotification: (_) {
-                  setInitialPosition();
-                  return true;
-                },
-                child: SizeChangedLayoutNotifier(
-                  child: Container(
-                    key: _floatingKey,
-                    child: liveChatSdk.entryPointWidget(
-                      customFloatingWidget: widget.customFloatingWidget,
-                    ),
-                  ),
-                ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          screenSize = Size(constraints.maxWidth, constraints.maxHeight);
+
+          return Stack(
+            children: [
+              widget.child,
+              Positioned(
+                left: position.dx,
+                top: position.dy,
+                child: _buildFloatingWidget(),
               ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFloatingWidget() {
+    return GestureDetector(
+      onPanUpdate: (details) {
+        setState(() {
+          userDragged = true;
+          position += details.delta;
+          position = Offset(
+            position.dx.clamp(0.0, (screenSize?.width ?? 0) - floatingWidgetSize.width),
+            position.dy.clamp(0.0, (screenSize?.height ?? 0) - floatingWidgetSize.height),
+          );
+        });
+      },
+      child: NotificationListener<SizeChangedLayoutNotification>(
+        onNotification: (_) {
+          setInitialPosition();
+          return true;
+        },
+        child: SizeChangedLayoutNotifier(
+          child: Container(
+            key: _floatingKey,
+            child: liveChatSdk.entryPointWidget(
+              customFloatingWidget: widget.customFloatingWidget,
             ),
           ),
-        ],
+        ),
       ),
     );
   }
