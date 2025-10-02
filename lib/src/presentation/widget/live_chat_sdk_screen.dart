@@ -30,14 +30,15 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
   final LiveChatSdk liveChatSdk = LiveChatSdk();
 
   bool userDragged = false;
+  Orientation? lastOrientation;
 
   void setInitialPosition() {
     final RenderBox? renderBox = _floatingKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox != null && screenSize != null) {
       final newSize = renderBox.size;
+      floatingWidgetSize = newSize;
 
       if (!userDragged) {
-        floatingWidgetSize = newSize;
         final newPosition = Offset(
           screenSize!.width - floatingWidgetSize.width - 15,
           screenSize!.height - floatingWidgetSize.height - 55,
@@ -56,11 +57,37 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
     }
   }
 
+  void handleOrientationChange(Orientation currentOrientation) {
+    if (lastOrientation != null && lastOrientation != currentOrientation) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && screenSize != null) {
+          setState(() {
+            double newX = position.dx;
+            double newY = position.dy;
+
+            if (position.dx + floatingWidgetSize.width > screenSize!.width || position.dy + floatingWidgetSize.height > screenSize!.height) {
+              newX = screenSize!.width - floatingWidgetSize.width - 15;
+              newY = screenSize!.height - floatingWidgetSize.height - 55;
+              userDragged = false;
+            } else {
+              newX = newX.clamp(0.0, screenSize!.width - floatingWidgetSize.width);
+              newY = newY.clamp(0.0, screenSize!.height - floatingWidgetSize.height);
+            }
+
+            position = Offset(newX, newY);
+          });
+        }
+      });
+    }
+    lastOrientation = currentOrientation;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       screenSize = MediaQuery.of(context).size;
+      lastOrientation = MediaQuery.of(context).orientation;
       setInitialPosition();
     });
   }
@@ -68,6 +95,9 @@ class _LiveChatSdkScreenState extends State<LiveChatSdkScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final currentOrientation = MediaQuery.of(context).orientation;
+    handleOrientationChange(currentOrientation);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       screenSize = MediaQuery.of(context).size;
       setInitialPosition();
