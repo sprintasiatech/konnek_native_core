@@ -34,23 +34,28 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
   Widget handlerWidget() {
     Widget filledWidget = Row(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: (AppController.iconWidget == null || AppController.floatingText == "") ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+      mainAxisAlignment: (AppController.iconWidget == null || AppController.floatingText == "") ? MainAxisAlignment.start : MainAxisAlignment.start,
       children: [
         (AppController.iconWidget != null && AppController.dataGetConfigValue?.iosIcon != "")
             ? Image.memory(
                 AppController.iconWidget!,
+                // AppController.iconWidget.value!,
+                // height: 50,
                 width: 50,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               )
             : SizedBox(),
         SizedBox(width: 10),
-        Text(
-          (AppController.floatingText != "") ? AppController.floatingText : "",
-          // "talk to us",
-          style: GoogleFonts.inter(
-            color: AppController.floatingTextColor,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: Text(
+            (AppController.floatingText != "") ? AppController.floatingText : "",
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              color: AppController.floatingTextColor,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         )
       ],
@@ -58,7 +63,7 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
 
     Widget emptyWidget = RichText(
       text: TextSpan(
-        text: "App! ",
+        text: "       ",
         style: GoogleFonts.inter(
           color: Colors.green,
           fontSize: 24,
@@ -66,8 +71,7 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
         ),
         children: <TextSpan>[
           TextSpan(
-            // text: "      ",
-            text: "Talk To Us",
+            text: "      ",
             style: GoogleFonts.inter(
               color: Colors.green,
               fontSize: 16,
@@ -108,7 +112,6 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
       child: widget.customFloatingWidget ??
           Container(
             padding: EdgeInsets.all(16),
-            width: 195,
             height: 70,
             decoration: BoxDecoration(
               color: AppController.floatingButtonColor,
@@ -117,7 +120,13 @@ class _ChatButtonWidgetState extends State<ChatButtonWidget> {
                 color: Colors.grey.shade300,
               ),
             ),
-            child: handlerWidget(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 195,
+                maxWidth: 300,
+              ),
+              child: handlerWidget(),
+            ),
           ),
     );
   }

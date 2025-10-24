@@ -311,7 +311,7 @@ class RoomGetConversation {
   bool? sendOutboundFlag;
   String? sessionId;
   int? status;
-  String? windowMessaging;
+  dynamic windowMessaging;
 
   RoomGetConversation({
     this.agentUserId,

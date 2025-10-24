@@ -59,7 +59,7 @@ class DataSocketRoomClosed {
   dynamic csat;
   dynamic lastCustomerMessageTime;
   bool? sendOutboundFlag;
-  String? windowMessaging;
+  dynamic windowMessaging;
   int? republish;
   dynamic error;
 
