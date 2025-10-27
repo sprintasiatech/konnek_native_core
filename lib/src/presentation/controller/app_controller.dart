@@ -381,7 +381,7 @@ class AppController {
       "time": currentDateValue.toUtc().toIso8601String(),
       "type": carouselDataChosen.actions![0].type,
       "text": carouselDataChosen.actions![0].title,
-      "postback": carouselDataChosen.actions![0].toJson(),
+      "postback": carouselDataChosen.actions![0],
       "channel_code": checkPlatform(),
       "from_type": 1,
       "room_id": jwtValue["payload"]["data"]["room_id"],

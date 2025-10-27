@@ -623,10 +623,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       }
                                                     });
                                                   },
-                                                  onSubmitted: (value) {
-                                                    textFieldInputAction();
-                                                  },
+                                                  keyboardType: TextInputType.multiline,
+                                                  maxLines: null,
                                                   decoration: InputDecoration(
+                                                    contentPadding: EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 5,
+                                                    ),
                                                     suffixIcon: (isTextFieldFocused && !isTextFieldEmpty)
                                                         ? InkWell(
                                                             onTap: () {

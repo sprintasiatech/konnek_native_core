@@ -54,7 +54,7 @@ class Action {
   String? description;
   String? key;
   String? mediaUrl;
-  Payload? payload;
+  dynamic payload;
   String? title;
   String? type;
   String? url;
@@ -75,7 +75,7 @@ class Action {
         description: json["description"],
         key: json["key"],
         mediaUrl: json["media_url"],
-        payload: json["payload"] == null ? null : Payload.fromJson(json["payload"]),
+        payload: json["payload"],
         title: json["title"],
         type: json["type"],
         url: json["url"],
@@ -86,31 +86,11 @@ class Action {
         "description": description,
         "key": key,
         "media_url": mediaUrl,
-        "payload": payload?.toJson(),
+        "payload": payload,
         "title": title,
         "type": type,
         "url": url,
         "value": value,
-      };
-}
-
-class Payload {
-  String? key;
-  String? menu;
-
-  Payload({
-    this.key,
-    this.menu,
-  });
-
-  factory Payload.fromJson(Map<String, dynamic> json) => Payload(
-        key: json["key"],
-        menu: json["menu"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "key": key,
-        "menu": menu,
       };
 }
 
